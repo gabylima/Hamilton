@@ -8,8 +8,8 @@ motor_dir = LargeMotor('outB')
 sensor_esq=ColorSensor("in1")
 sensor_dir=ColorSensor("in2")
 
-def frente():
 
+def frente():
     motor_esq.run_timed(time_sp=2000, speed_sp= -500)
     motor_dir.run_timed(time_sp=2000, speed_sp= -500)
     sleep(2)
@@ -31,7 +31,6 @@ sensor_esq.mode = 'COL-REFLECT'
 sensor_dir.mode = 'COL-REFLECT'
 
 
-
 while (x<1):
     s1=sensor_esq.value()
     s2=sensor_dir.value()
@@ -40,7 +39,3 @@ while (x<1):
     print("s2",s2)
 
     x=x+1
-
-
-
-

@@ -5,10 +5,21 @@ from time import sleep
 from os import system
 from simple_pid import PID
 
-KP = 7
+
+#by Rocha
+#direita =5 no preto
+#direita = 93 no branco
+
+#esquerda= 7 no preto
+#esquerda= 95 no branco
+
+#setpoint = 2
+
+
+KP = 2.5
 KI = 0
 KD = 0
-SP = -6
+SP = -4
 TP = -180.0
 
 pid = PID(KP, KI, KD, setpoint=SP)
@@ -21,31 +32,35 @@ motor_esq = LargeMotor('outA')
 motor_dir = LargeMotor('outD')
 
 # Connect EV3 color and touch sensors to any sensor ports
-sensor_esq = ColorSensor("in1")
-sensor_dir = ColorSensor("in3")
+
+sensor_esq = ColorSensor("in1"
+                         "")
+sensor_dir = ColorSensor("in4")
 
 # Put the color sensor into RGB mode.
+
 sensor_esq.mode = 'COL-REFLECT'
 sensor_dir.mode = 'COL-REFLECT'
 
 def executar(TP):
-    try:
-        while True:
-            control = pid((sensor_esq.value() - sensor_dir.value()))
+        try:
+            while True:
+                dif = sensor_esq.value() - sensor_dir.value()
+                control = pid(dif)
+                print('dif:'+str(dif))
+                print(control)
 
-            print(control)
+                # offset = 5  # margem de erro para que ele fique reto na linha
+                # erro = ( + offset)  # Calcula o erro para que ele sempre siga a linha preta
+                # p = kp * erro  # constante proporcionalss
+                # # anda de acordo com o erro calculado
 
-            # offset = 5  # margem de erro para que ele fique reto na linha
-            # erro = ( + offset)  # Calcula o erro para que ele sempre siga a linha preta
-            # p = kp * erro  # constante proporcionalss
-            # # anda de acordo com o erro calculado
+                motor_esq.run_forever(speed_sp=TP - control)
+                motor_dir.run_forever(speed_sp=TP + control)
 
-            motor_esq.run_forever(speed_sp=TP + control)
-            motor_dir.run_forever(speed_sp=TP - control)
-
-    except KeyboardInterrupt:
-        motor_dir.stop()
-        motor_esq.stop()
+        except KeyboardInterrupt:
+            motor_dir.stop()
+            motor_esq.stop()
 
 
 executar(TP)

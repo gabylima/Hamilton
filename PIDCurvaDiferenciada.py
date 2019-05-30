@@ -14,7 +14,7 @@ from csv import*
 KP = 12
 KI = 0
 KD = 0
-TP = 200.0
+TP = 250.0
 
 #di branco = 79
 #di negro = 7
@@ -39,12 +39,12 @@ sensor_dir.mode = 'COL-REFLECT'
 
 
 
-def calibragem():
-    botao = Button()
+def calibragem(button2):
     print('posicione os sensores de cor na superficie branca e aperte um botao')
     try:
         while True:
-            if botao.any():
+            if button2.enter:
+                   print('RODRIGO')
                    di = sensor_dir.value()
                    esq = sensor_esq.value()
                    return esq - di
@@ -102,8 +102,26 @@ def executar(TP, SP):
         arq.close()
 
 
+def menu():
+    # Faz a conexão entre o usuario e robô onde ele pode escolher entre
+    # calibrar(botão Direito) os valores da pista e rodar(botão Esquerdo) o programa
+
+    button2 = Button()
+    print("<< Calibrar |Iniciar >>")
+    SP =0;
+    while True:
+        if button2.left:
+            system("clear")
+            SP = calibragem(button2)
+            print('SP atualizado')
+            sleep(0.01)
+            print("<< Calibrar |Iniciar >>")
+
+        elif button2.right:
+            system("clear")
+            executar(TP, SP)
+            break
+c
+menu()
 
 
-
-SP = calibragem()
-executar(TP,SP)

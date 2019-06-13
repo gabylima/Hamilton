@@ -6,25 +6,11 @@ from os import system
 from simple_pid import PID
 from csv import*
 
-#CodigoRodando, fazendo tudo exceto curva que tem um gap após ela.
-
-
-
-
-KP = 11
+KP = 12
 KI = 0
 KD = 0
 TP = 280.0
 VALOR_MAX_CONTROL = 1000 - TP
-
-# kp=6 ki=0.5 kd=10 tp=250.0
-
-#di branco = 79
-#di negro = 7
-#esq branco =81
-#esq negro =6
-
-
 
 system('setfont Lat15-TerminusBold14')
 
@@ -35,31 +21,82 @@ motor_dir = LargeMotor('outD')
 sensor_esq = ColorSensor("in1")
 sensor_dir = ColorSensor("in2")
 
-sen_esq= ColorSensor("in3")
-sen_dir = ColorSensor("in4")
 
-# Put the color sensor into RGB mode. * 0=unknown, 1=black, 2=blue, 3=green, 4=yellow, 5=red, 6=white, 7=brown
-sensor_esq.mode = 'COL-REFLECT'
-sensor_dir.mode = 'COL-REFLECT'
+# Sensores
+# Modo RGB. * 0=desconhecido, 1=preto, 2=azul, 3=verde, 4=amarelo, 5=vermelho, 6=branco, 7=marrom
+sensor_esq.mode = 'COL-REFLECT'  #
+sensor_dir.mode = 'COL-REFLECT'  #
 
-sen_esq.mode= 'COL-COLOR'
-sen_dir.mode = 'COL-COLOR'
 
+# Sensor ultrassonico
+us = UltrasonicSensor()
+ultra1 = UltrasonicSensor('in3')
+ultra2= UltrasonicSensor('in4')
+
+
+def obstaculo():
+    TPO = 250
+    KP = 1
+    KI = 0
+    KD = 0
+    SPO = 25
+    R=440
+    VALOR_MAX_CONTROL = R - TPO  # é o que define sua potencia para girar, se aumentar o TP terá que aumentar a constante que
+    # subtrai o TP
+
+    pid = PID(KP, KI, KD, setpoint=SPO)
+    lista1 = []
+    try:
+        while True:
+            valor = ultra2.value()
+            control = pid(valor)
+            lista1.append(round(control))
+
+            if (control > VALOR_MAX_CONTROL):
+                control = VALOR_MAX_CONTROL
+            elif (control < -VALOR_MAX_CONTROL):
+                control = -VALOR_MAX_CONTROL
+
+            motor_esq.run_forever(speed_sp=TPO - control)
+            motor_dir.run_forever(speed_sp=TPO + control)
+
+            e = motor_esq.count_per_rot
+            d = motor_dir.count_per_rot
+
+    except KeyboardInterrupt:
+
+        motor_dir.stop()
+        motor_esq.stop()
+
+        arq = open('obstaculo.csv', 'w')
+
+        for i in lista1:
+            arq.write(str(i) + ',\n')
+        arq.close()
 
 def mfrente():
     motor_dir.run_to_rel_pos(position_sp=250, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=250, speed_sp=400, stop_action="hold")
     sleep(0.9)
 
-def mgiroesq():
+def mgirodi():
     motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
     sleep(0.9)
 
-def mgirodi():
+def mgiroesq():
     motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
     sleep(0.9)
+
+def GirarAteVerObstaculo():
+    while (ultra2.value() >328):
+        giroDir()
+
+def GirarAteNVerObstaculo():
+
+    while (ultra2.value() < 1000 ):
+        giroDir()
 
 def tras():
     # Função para que o robô ande para a frente por ângulo
@@ -67,7 +104,6 @@ def tras():
     motor_dir.run_to_rel_pos(position_sp=-240, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=-240, speed_sp=400, stop_action="hold")
     sleep(0.5)
-
 
 def frenteMenor():
     # Função que será utilizada para ajudar no auxilio da finalização dos obstáculo.
@@ -84,18 +120,12 @@ def frenteMenor():
     motor_esq.run_to_rel_pos(position_sp=-70, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-
 def giroDir():
     # Faz com que o robô ande e se ajuste na linha para a direita
 
-    motor_esq.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
-    sleep(0.5)
 
-    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
-    sleep(0.5)
-
+    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=200, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=200, stop_action="hold")
 
 def giroEsq():
     # Faz com quê o robo gire para á esquerda
@@ -112,14 +142,12 @@ def giroEsq():
     motor_dir.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-
 def frente():
     # Faz com que o robô ande pare trás (positivo)
 
     motor_dir.run_to_rel_pos(position_sp=40, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=40, speed_sp=400, stop_action="hold")
     sleep(0.5)
-
 
 def stop():
     # O robô para de se mover com os dois motores ao mesmo tempo
@@ -252,6 +280,26 @@ def verde():
         sensor_esq.mode = 'COL-REFLECT'
         sensor_dir.mode = 'COL-REFLECT'
 
+def verde2():
+
+    sensor_esq.mode = 'COL-COLOR'
+    sensor_dir.mode = 'COL-COLOR'
+
+    verdeE = sensor_esq.value()
+    verdeD = sensor_dir.value()
+
+    if (verdeE == 3 and verdeD==6):
+
+        mgiroesq()
+        Sound.beep()
+
+    elif(verdeD== 3 and verdeE==6):
+
+        mgirodi()
+        Sound.beep()
+    sensor_esq.mode = 'COL-REFLECT'
+    sensor_dir.mode = 'COL-REFLECT'
+
 def calibragem(button2):
     print('posicione os sensores de cor na superficie branca e aperte um botao')
     try:
@@ -274,10 +322,21 @@ def executar(TP, SP):
 
     try:
         while True:
+            if ultra1.value() <= 100:
+
+                stop()
+                Sound.beep()
+                GirarAteVerObstaculo()
+                obstaculo()
 
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
 
+
+            # codigo para identificar verde
+
+            if (control >600 and control <800):
+                verde2()
             # condições para evitar ultrapassar o valor máximo do motor
 
             if (control > VALOR_MAX_CONTROL):
@@ -285,45 +344,12 @@ def executar(TP, SP):
             elif (control < -VALOR_MAX_CONTROL) :
                 control= -VALOR_MAX_CONTROL
 
-            #print('dif:' + str(dif))
-            #print(control)
 
             motor_esq.run_forever(speed_sp=TP + control)
             motor_dir.run_forever(speed_sp=TP - control)
 
-            lista.append(round(control))
-            #if sen_dir.value() == 3 and sen_esq.value() == 6:
-                #stop()
-                #frente()
-                #mfrente()
-                #mgiroesq()
 
-                # O que é isso???
-                #if (sen_esq.value() == 1 and sen_dir.value() == 1) or (sen_esq.value() == 1 and sen_dir.value() == 6):
-                    #motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
-                    #motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
-                    #sleep(0.5)
-
-
-                    #motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
-                    #motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
-                    #sleep(0.5)
-            #elif sen_dir.value() == 6 and sen_esq.value() == 3:
-                #stop()
-                #mfrente()
-                #mgirodi()
-                # frente()
-
-            #elif dif > 0:
-                #print('verde para direita')
-
-            # offset = 5  # margem de erro para que ele fique reto na linha
-            # erro = ( + offset)  # Calcula o erro para que ele sempre siga a linha preta
-            # p = kp * erro  # constante proporcionalss
-            # # anda de acordo com o erro calculado
-
-
-
+        lista.append(round(control))
 
 
     except KeyboardInterrupt:
@@ -331,24 +357,22 @@ def executar(TP, SP):
         motor_dir.stop()
         motor_esq.stop()
 
-        print('aqui {}'.format(lista[0]))
         arq = open('rocha.csv', 'w')
         for i in lista:
             arq.write(str(i)+',\n')
         arq.close()
-
-
-
-
 
 def menu():
     # Faz a conexão entre o usuario e robô onde ele pode escolher entre
     # calibrar(botão Direito) os valores da pista e rodar(botão Esquerdo) o programa
 
     button2 = Button()
-    print("<< Calibrar |Iniciar >>")
+    print("<< Calibrar | Iniciar >>")
+
     SP =0;
+
     while True:
+
         if button2.left:
             system("clear")
             SP = calibragem(button2)

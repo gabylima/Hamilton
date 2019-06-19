@@ -6,10 +6,10 @@ from os import system
 from simple_pid import PID
 from csv import*
 
-KP = 12
+KP = 14 #modifiquei o kp: tava 12
 KI = 0
 KD = 0
-TP = 280.0
+TP = 250.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 
 system('setfont Lat15-TerminusBold14')
@@ -75,8 +75,8 @@ def obstaculo():
         arq.close()
 
 def mfrente():
-    motor_dir.run_to_rel_pos(position_sp=250, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=250, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=90, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=90, speed_sp=400, stop_action="hold")
     sleep(0.9)
 
 def mgirodi():
@@ -289,14 +289,17 @@ def verde2():
     verdeD = sensor_dir.value()
 
     if (verdeE == 3 and verdeD==6):
-
+        mfrente()                      #modifiquei adcionando o mfrente
         mgiroesq()
+        mfrente()
         Sound.beep()
 
     elif(verdeD== 3 and verdeE==6):
-
+        mfrente()                   #modifiquei adcionando o mfrente
         mgirodi()
+        mfrente()
         Sound.beep()
+
     sensor_esq.mode = 'COL-REFLECT'
     sensor_dir.mode = 'COL-REFLECT'
 
@@ -326,8 +329,8 @@ def executar(TP, SP):
 
                 stop()
                 Sound.beep()
-                GirarAteVerObstaculo()
-                obstaculo()
+                #GirarAteVerObstaculo() #tirei temporariamente
+                #obstaculo() #tirei temporariamente
 
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
@@ -335,10 +338,27 @@ def executar(TP, SP):
 
             # codigo para identificar verde
 
-            if (control >600 and control <800):
-                verde2()
-            # condições para evitar ultrapassar o valor máximo do motor
+            #direito no branco = 86 ou 87
 
+            # direito no preto = 7
+
+            # direito no verde = 12
+
+            #branco para verde = 62
+
+            # esquerdo no branco = 79
+
+            # esquerdo no preto = 7
+
+            # esquerdo no verde = 9
+
+            # branco para verde = 67
+
+            if (sensor_dir.value() ==10 or sensor_esq.value() ==9):
+                verde2()
+
+
+            # condições para evitar ultrapassar o valor máximo do motor
             if (control > VALOR_MAX_CONTROL):
                 control = VALOR_MAX_CONTROL
             elif (control < -VALOR_MAX_CONTROL) :

@@ -6,18 +6,17 @@ from os import system
 from simple_pid import PID
 from csv import*
 
-KP = 14 #modifiquei o kp: tava 12
+KP = 11 #modifiquei o kp: tava 12
 KI = 0
 KD = 0
-TP = 250.0 #modifiquei tp: tava 280
-VALOR_MAX_CONTROL = 1000 - TP
-
+TP = 280.0 #modifiquei tp: tava 280
+VALOR_MAX_CONTROL = 1000 - TP  # antes tava 1000
+CORRECAO_MOTOR = 10
 system('setfont Lat15-TerminusBold14')
 
 # Motores
-motor_esq = LargeMotor('outB')
-motor_dir = LargeMotor('outD')
-
+motor_dir = LargeMotor('outB')
+motor_esq = LargeMotor('outD')
 sensor_esq = ColorSensor("in1")
 sensor_dir = ColorSensor("in2")
 
@@ -33,6 +32,13 @@ us = UltrasonicSensor()
 ultra1 = UltrasonicSensor('in3')
 ultra2= UltrasonicSensor('in4')
 
+
+
+#s3 =ColorSensor("in3")
+#s4 =ColorSensor("in4")
+
+#s3.mode = 'COL-REFLECT'
+#s4.mode = 'COL-REFLECT'
 
 def obstaculo():
     TPO = 250
@@ -59,7 +65,6 @@ def obstaculo():
 
             motor_esq.run_forever(speed_sp=TPO - control)
             motor_dir.run_forever(speed_sp=TPO + control)
-
             e = motor_esq.count_per_rot
             d = motor_dir.count_per_rot
 
@@ -319,6 +324,8 @@ def calibragem(button2):
         motor_dir.stop()
         motor_esq.stop()
 
+
+
 def executar(TP, SP):
     pid = PID(KP, KI, KD, setpoint=SP)
     lista = []
@@ -334,6 +341,7 @@ def executar(TP, SP):
 
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
+            #print("control {}".format(control))
 
 
             # codigo para identificar verde
@@ -354,7 +362,7 @@ def executar(TP, SP):
 
             # branco para verde = 67
 
-            if (sensor_dir.value() ==10 or sensor_esq.value() ==9):
+            if (sensor_dir.value() == 10 or sensor_esq.value() == 9):
                 verde2()
 
 
@@ -365,8 +373,17 @@ def executar(TP, SP):
                 control= -VALOR_MAX_CONTROL
 
 
-            motor_esq.run_forever(speed_sp=TP + control)
-            motor_dir.run_forever(speed_sp=TP - control)
+
+
+
+
+
+
+
+            #condição para não sair da linha, usando o sensor do meio
+
+            motor_esq.run_forever(speed_sp=TP - control)
+            motor_dir.run_forever(speed_sp=TP + control + CORRECAO_MOTOR)
 
 
         lista.append(round(control))

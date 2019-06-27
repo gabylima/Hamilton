@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3e35326-d1b7-4288-b750-7bbb0e88e604" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Frente.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PIDCurvaDiferenciada.py" beforeDir="false" afterPath="$PROJECT_DIR$/PIDCurvaDiferenciada.py" afterDir="false" />
     </list>
@@ -15,42 +12,26 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PIDCurvaDiferenciada.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
+            <state relative-caret-position="150">
+              <caret line="130" column="56" selection-start-line="130" selection-start-column="56" selection-end-line="130" selection-end-column="56" />
               <folding>
                 <element signature="e#24#48#0" expanded="true" />
-                <element signature="e#865#1861#0" />
-                <element signature="e#1882#2050#0" />
-                <element signature="e#2071#2242#0" />
-                <element signature="e#2264#2435#0" />
-                <element signature="e#2469#2515#0" />
-                <element signature="e#2551#2600#0" />
-                <element signature="e#2618#2850#0" />
-                <element signature="e#2875#3483#0" />
-                <element signature="e#3504#3728#0" />
-                <element signature="e#3749#4321#0" />
-                <element signature="e#4341#4561#0" />
-                <element signature="e#4579#4697#0" />
-                <element signature="e#4719#5007#0" />
-                <element signature="e#5031#9978#0" />
-                <element signature="e#9999#10530#0" />
-                <element signature="e#10561#10946#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Frente.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="15" column="45" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
-              <folding>
-                <element signature="e#24#48#0" expanded="true" />
+                <element signature="e#1903#2071#0" />
+                <element signature="e#2092#2263#0" />
+                <element signature="e#2285#2456#0" />
+                <element signature="e#2639#2871#0" />
+                <element signature="e#2896#3504#0" />
+                <element signature="e#4362#4582#0" />
+                <element signature="e#4600#4718#0" />
+                <element signature="e#4740#5028#0" />
+                <element signature="e#5052#9999#0" />
+                <element signature="e#10020#10551#0" />
+                <element signature="e#10582#10967#0" />
+                <element signature="e#12594#13137#0" />
               </folding>
             </state>
           </provider>
@@ -93,6 +74,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -104,7 +86,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -146,12 +127,14 @@
       <workItem from="1561033513760" duration="3825000" />
       <workItem from="1561040223268" duration="3032000" />
       <workItem from="1561479716386" duration="10589000" />
-      <workItem from="1561490866697" duration="3927000" />
+      <workItem from="1561490866697" duration="4082000" />
+      <workItem from="1561559003576" duration="597000" />
+      <workItem from="1561651992269" duration="8223000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="43615000" />
+    <option name="totallyTimeSpent" value="52590000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -166,7 +149,7 @@
     <frame x="-3" y="0" width="1372" height="738" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.225" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23257576" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -181,7 +164,7 @@
       <window_info anchor="bottom" id="File Transfer" order="9" weight="0.3284553" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="12" visible="true" weight="0.33170733" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="12" visible="true" weight="0.40650406" />
       <window_info anchor="bottom" id="Python Console" order="13" weight="0.3294702" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -227,8 +210,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Frente.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="15" column="45" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
+        <state relative-caret-position="272">
+          <caret line="20" column="5" lean-forward="true" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
           <folding>
             <element signature="e#24#48#0" expanded="true" />
           </folding>
@@ -237,26 +220,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PIDCurvaDiferenciada.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
+        <state relative-caret-position="150">
+          <caret line="130" column="56" selection-start-line="130" selection-start-column="56" selection-end-line="130" selection-end-column="56" />
           <folding>
             <element signature="e#24#48#0" expanded="true" />
-            <element signature="e#865#1861#0" />
-            <element signature="e#1882#2050#0" />
-            <element signature="e#2071#2242#0" />
-            <element signature="e#2264#2435#0" />
-            <element signature="e#2469#2515#0" />
-            <element signature="e#2551#2600#0" />
-            <element signature="e#2618#2850#0" />
-            <element signature="e#2875#3483#0" />
-            <element signature="e#3504#3728#0" />
-            <element signature="e#3749#4321#0" />
-            <element signature="e#4341#4561#0" />
-            <element signature="e#4579#4697#0" />
-            <element signature="e#4719#5007#0" />
-            <element signature="e#5031#9978#0" />
-            <element signature="e#9999#10530#0" />
-            <element signature="e#10561#10946#0" />
+            <element signature="e#1903#2071#0" />
+            <element signature="e#2092#2263#0" />
+            <element signature="e#2285#2456#0" />
+            <element signature="e#2639#2871#0" />
+            <element signature="e#2896#3504#0" />
+            <element signature="e#4362#4582#0" />
+            <element signature="e#4600#4718#0" />
+            <element signature="e#4740#5028#0" />
+            <element signature="e#5052#9999#0" />
+            <element signature="e#10020#10551#0" />
+            <element signature="e#10582#10967#0" />
+            <element signature="e#12594#13137#0" />
           </folding>
         </state>
       </provider>

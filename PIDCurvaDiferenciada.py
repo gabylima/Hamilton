@@ -9,7 +9,7 @@ from csv import*
 KP = 11 #modifiquei o kp: tava 12
 KI = 0
 KD = 0
-TP = 280.0 #modifiquei tp: tava 280
+TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP  # antes tava 1000
 CORRECAO_MOTOR = 10
 system('setfont Lat15-TerminusBold14')
@@ -42,7 +42,7 @@ ultra2= UltrasonicSensor('in4')
 
 def obstaculo():
     TPO = 250
-    KP = 1
+    KPO = 1
     KI = 0
     KD = 0
     SPO = 25
@@ -50,9 +50,10 @@ def obstaculo():
     VALOR_MAX_CONTROL = R - TPO  # é o que define sua potencia para girar, se aumentar o TP terá que aumentar a constante que
     # subtrai o TP
 
-    pid = PID(KP, KI, KD, setpoint=SPO)
+    pid = PID(KPO, KI, KD, setpoint=SPO)
     lista1 = []
     try:
+
         while True:
             valor = ultra2.value()
             control = pid(valor)
@@ -65,8 +66,7 @@ def obstaculo():
 
             motor_esq.run_forever(speed_sp=TPO - control)
             motor_dir.run_forever(speed_sp=TPO + control)
-            e = motor_esq.count_per_rot
-            d = motor_dir.count_per_rot
+
 
     except KeyboardInterrupt:
 
@@ -85,13 +85,13 @@ def mfrente():
     sleep(0.9)
 
 def mgirodi():
-    motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
     sleep(0.9)
 
 def mgiroesq():
-    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     sleep(0.9)
 
 def GirarAteVerObstaculo():
@@ -106,15 +106,15 @@ def GirarAteNVerObstaculo():
 def tras():
     # Função para que o robô ande para a frente por ângulo
 
-    motor_dir.run_to_rel_pos(position_sp=-240, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-240, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-70, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-70, speed_sp=400+CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
 
 def frenteMenor():
     # Função que será utilizada para ajudar no auxilio da finalização dos obstáculo.
 
-    motor_dir.run_to_rel_pos(position_sp=-80, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-80, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=80, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=80, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
     motor_dir.run_to_rel_pos(position_sp=-80, speed_sp=400, stop_action="hold")
@@ -127,31 +127,29 @@ def frenteMenor():
 
 def giroDir():
     # Faz com que o robô ande e se ajuste na linha para a direita
-
-
-    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=200, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=200, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=180, speed_sp=200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=-200, stop_action="hold")
 
 def giroEsq():
     # Faz com quê o robo gire para á esquerda
 
-    motor_esq.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-    motor_esq.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-    motor_esq.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def frente():
     # Faz com que o robô ande pare trás (positivo)
 
-    motor_dir.run_to_rel_pos(position_sp=40, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=40, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=240, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=240, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def stop():
@@ -165,11 +163,33 @@ def twoverde():
     # Função para quando o robô vê dois verdes ao mesmo tempo com os dois sensores de cor
 
     stop()
-    giroEsq()
 
-    motor_esq.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
     sleep(0.5)
+
+    motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+    motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+    motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+    motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
+
+
+
+
+
 
 def verde():
 
@@ -293,11 +313,35 @@ def verde2():
     verdeE = sensor_esq.value()
     verdeD = sensor_dir.value()
 
-    if (verdeE == 3 and verdeD==6):
-        mfrente()                      #modifiquei adcionando o mfrente
-        mgiroesq()
-        mfrente()
+    if(verdeE==3 and verdeD==3):
+        twoverde()
+
+    elif (verdeE == 3 and verdeD==6):
+
         Sound.beep()
+        tras()
+        stop()
+
+        if(verdeE== 6 and verdeD==6):
+
+            motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
+            motor_dir.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+            motor_dir.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+            motor_esq.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+
+        elif(verdeE==1 and verdeD==1):
+            frente()
+            frente()
+            frente()
+
+        elif(verdeE==1 and verdeD== 6):
+            frente()
+            frente()
+            frente()
+
+
 
     elif(verdeD== 3 and verdeE==6):
         mfrente()                   #modifiquei adcionando o mfrente
@@ -324,8 +368,6 @@ def calibragem(button2):
         motor_dir.stop()
         motor_esq.stop()
 
-
-
 def executar(TP, SP):
     pid = PID(KP, KI, KD, setpoint=SP)
     lista = []
@@ -336,15 +378,13 @@ def executar(TP, SP):
 
                 stop()
                 Sound.beep()
-                #GirarAteVerObstaculo() #tirei temporariamente
-                #obstaculo() #tirei temporariamente
+                #GirarAteVerObstaculo()
+                #obstaculo()
 
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
             #print("control {}".format(control))
 
-
-            # codigo para identificar verde
 
             #direito no branco = 86 ou 87
 
@@ -362,7 +402,11 @@ def executar(TP, SP):
 
             # branco para verde = 67
 
-            if (sensor_dir.value() == 10 or sensor_esq.value() == 9):
+
+            # codigo para identificar verde
+
+
+            if ((sensor_dir.value() == 10 or sensor_dir.value() == 9 ) or (sensor_esq.value() == 9 or sensor_esq.value() == 10)):
                 verde2()
 
 
@@ -371,14 +415,6 @@ def executar(TP, SP):
                 control = VALOR_MAX_CONTROL
             elif (control < -VALOR_MAX_CONTROL) :
                 control= -VALOR_MAX_CONTROL
-
-
-
-
-
-
-
-
 
             #condição para não sair da linha, usando o sensor do meio
 

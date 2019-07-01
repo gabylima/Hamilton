@@ -4,6 +4,9 @@ from ev3dev.ev3 import *
 from time import sleep
 from os import system
 from simple_pid import PID
+
+#import paho.mqtt.client as mqtt
+
 from csv import*
 
 KP = 11 #modifiquei o kp: tava 12
@@ -20,7 +23,6 @@ motor_esq = LargeMotor('outD')
 sensor_esq = ColorSensor("in1")
 sensor_dir = ColorSensor("in2")
 
-
 # Sensores
 # Modo RGB. * 0=desconhecido, 1=preto, 2=azul, 3=verde, 4=amarelo, 5=vermelho, 6=branco, 7=marrom
 sensor_esq.mode = 'COL-REFLECT'  #
@@ -32,25 +34,67 @@ us = UltrasonicSensor()
 ultra1 = UltrasonicSensor('in3')
 ultra2= UltrasonicSensor('in4')
 
-
-
 #s3 =ColorSensor("in3")
 #s4 =ColorSensor("in4")
 
 #s3.mode = 'COL-REFLECT'
 #s4.mode = 'COL-REFLECT'
 
+
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code " + str(rc))
+    client.subscribe("topic/test")
+
+
+def on_message(client, userdata, msg):
+    if msg.payload.decode() == "Hello world!":
+        print("Yes!")
+        client.disconnect()
+
+
+def mfrentemenor():
+    motor_dir.run_to_rel_pos(position_sp=75, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
+    sleep(0.5)
+
+def EgiroVerde():
+    motor_esq.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+    motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
+def DgiroVerde():
+
+    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+    motor_esq.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
+def mtras():
+    motor_dir.run_to_rel_pos(position_sp=-75, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
+    sleep(0.5)
+
 def obstaculo():
-    TPO = 250
-    KPO = 1
-    KI = 0
-    KD = 0
-    SPO = 25
-    R=440
-    VALOR_MAX_CONTROL = R - TPO  # é o que define sua potencia para girar, se aumentar o TP terá que aumentar a constante que
+    KPO = 6
+    TPO = 100
+    KIO = 0
+    KDO = 0
+    SPO = 15
+    V_MAX_MOTOR=1000
+    VALOR_MAX_CONTROL = V_MAX_MOTOR - TPO  # é o que define sua potencia para girar, se aumentar o TP terá que aumentar a constante que
     # subtrai o TP
 
-    pid = PID(KPO, KI, KD, setpoint=SPO)
+    pid = PID(KPO, KIO, KDO, setpoint=SPO)
     lista1 = []
     try:
 
@@ -64,8 +108,8 @@ def obstaculo():
             elif (control < -VALOR_MAX_CONTROL):
                 control = -VALOR_MAX_CONTROL
 
-            motor_esq.run_forever(speed_sp=TPO - control)
-            motor_dir.run_forever(speed_sp=TPO + control)
+            motor_esq.run_forever(speed_sp=TPO)
+            motor_dir.run_forever(speed_sp=TPO - control)
 
 
     except KeyboardInterrupt:
@@ -80,9 +124,9 @@ def obstaculo():
         arq.close()
 
 def mfrente():
-    motor_dir.run_to_rel_pos(position_sp=90, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=90, speed_sp=400, stop_action="hold")
-    sleep(0.9)
+    motor_dir.run_to_rel_pos(position_sp=140, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=140, speed_sp=400, stop_action="hold")
+    sleep(0.5)
 
 def mgirodi():
     motor_esq.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
@@ -95,8 +139,25 @@ def mgiroesq():
     sleep(0.9)
 
 def GirarAteVerObstaculo():
-    while (ultra2.value() >328):
-        giroDir()
+    motor_esq.run_to_rel_pos(position_sp=440, speed_sp=200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-440, speed_sp=200, stop_action="hold")
+    sleep(0.5)
+
+    motor_esq.run_to_rel_pos(position_sp=440, speed_sp=200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-440, speed_sp=200, stop_action="hold")
+    sleep(0.5)
+
+    motor_esq.run_to_rel_pos(position_sp=440, speed_sp=200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-440, speed_sp=200, stop_action="hold")
+    sleep(0.5)
+
+    motor_esq.run_to_rel_pos(position_sp=440, speed_sp=200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-440, speed_sp=200, stop_action="hold")
+    sleep(0.5)
+
+    motor_esq.run_to_rel_pos(position_sp=90, speed_sp=200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-90, speed_sp=200, stop_action="hold")
+    sleep(0.5)
 
 def GirarAteNVerObstaculo():
 
@@ -128,7 +189,7 @@ def frenteMenor():
 def giroDir():
     # Faz com que o robô ande e se ajuste na linha para a direita
     motor_esq.run_to_rel_pos(position_sp=180, speed_sp=200, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=-200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=200, stop_action="hold")
 
 def giroEsq():
     # Faz com quê o robo gire para á esquerda
@@ -183,13 +244,6 @@ def twoverde():
     motor_dir.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
     sleep(0.5)
-
-
-
-
-
-
-
 
 def verde():
 
@@ -316,38 +370,32 @@ def verde2():
     if(verdeE==3 and verdeD==3):
         twoverde()
 
-    elif (verdeE == 3 and verdeD==6):
-
+    elif (verdeE == 3 or verdeD==3):
+        stop()
         Sound.beep()
-        tras()
+        mtras()
         stop()
 
-        if(verdeE== 6 and verdeD==6):
-
-            motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
-            motor_dir.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
-            sleep(0.5)
-
-            motor_dir.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
-            motor_esq.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
-
-        elif(verdeE==1 and verdeD==1):
-            frente()
-            frente()
-            frente()
-
-        elif(verdeE==1 and verdeD== 6):
-            frente()
-            frente()
-            frente()
+        verdeE = sensor_esq.value()
+        verdeD = sensor_dir.value()
 
 
+        if(verdeD== 1 and verdeE ==1):
+            mfrente()
 
-    elif(verdeD== 3 and verdeE==6):
-        mfrente()                   #modifiquei adcionando o mfrente
-        mgirodi()
-        mfrente()
-        Sound.beep()
+        elif (verdeD== 6 and verdeE ==6):
+            mfrentemenor()
+            verdeEs = sensor_esq.value()
+            verdeDi = sensor_dir.value()
+            stop()
+
+            if (verdeDi == 3 and verdeEs == 6):
+                mfrente()
+                DgiroVerde()
+            elif (verdeDi== 6 and verdeEs==3):
+                mfrente()
+                EgiroVerde()
+
 
     sensor_esq.mode = 'COL-REFLECT'
     sensor_dir.mode = 'COL-REFLECT'
@@ -368,41 +416,38 @@ def calibragem(button2):
         motor_dir.stop()
         motor_esq.stop()
 
+def resinha():
+    motor_dir.run_to_rel_pos(position_sp=-75, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
+    sleep(0.5)
+
 def executar(TP, SP):
     pid = PID(KP, KI, KD, setpoint=SP)
     lista = []
 
     try:
         while True:
-            if ultra1.value() <= 100:
+            if ultra1.value() <= 50:
 
                 stop()
                 Sound.beep()
-                #GirarAteVerObstaculo()
-                #obstaculo()
+                resinha()
+                GirarAteVerObstaculo()
+                stop()
+                obstaculo()
 
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
             #print("control {}".format(control))
+            '''
+            client = mqtt.Client()
+            client.connect("THE_IP_ADDRESS_OF_OUR_BROKER", 1883, 60)
 
+            client.on_connect = on_connect
+            client.on_message = on_message
 
-            #direito no branco = 86 ou 87
-
-            # direito no preto = 7
-
-            # direito no verde = 12
-
-            #branco para verde = 62
-
-            # esquerdo no branco = 79
-
-            # esquerdo no preto = 7
-
-            # esquerdo no verde = 9
-
-            # branco para verde = 67
-
-
+            client.loop_forever()
+            '''
             # codigo para identificar verde
 
 

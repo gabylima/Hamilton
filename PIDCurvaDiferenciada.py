@@ -4,18 +4,18 @@ from ev3dev.ev3 import *
 from time import sleep
 from os import system
 from simple_pid import PID
-
-#import paho.mqtt.client as mqtt
-
+import paho.mqtt.client as mqtt
 from csv import*
 
+c=0
+system('setfont Lat15-TerminusBold14') # estilização
 KP = 11 #modifiquei o kp: tava 12
 KI = 0
 KD = 0
 TP = 210.0 #modifiquei tp: tava 280
-VALOR_MAX_CONTROL = 1000 - TP  # antes tava 1000
+VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 10
-system('setfont Lat15-TerminusBold14')
+
 
 # Motores
 motor_dir = LargeMotor('outB')
@@ -23,42 +23,51 @@ motor_esq = LargeMotor('outD')
 sensor_esq = ColorSensor("in1")
 sensor_dir = ColorSensor("in2")
 
-# Sensores
-# Modo RGB. * 0=desconhecido, 1=preto, 2=azul, 3=verde, 4=amarelo, 5=vermelho, 6=branco, 7=marrom
-sensor_esq.mode = 'COL-REFLECT'  #
-sensor_dir.mode = 'COL-REFLECT'  #
-
+sensor_esq.mode = 'COL-REFLECT'
+sensor_dir.mode = 'COL-REFLECT'
 
 # Sensor ultrassonico
-us = UltrasonicSensor()
 ultra1 = UltrasonicSensor('in3')
 ultra2= UltrasonicSensor('in4')
 
-#s3 =ColorSensor("in3")
-#s4 =ColorSensor("in4")
+# Modo Color. * 0=desconhecido, 1=preto, 2=azul, 3=verde, 4=amarelo, 5=vermelho, 6=branco, 7=marrom
 
-#s3.mode = 'COL-REFLECT'
-#s4.mode = 'COL-REFLECT'
+carga = 0
+
+def on_connect(client, userdata, flags,message):
+
+    client.subscribe("topic/sensors")
+    print('conectado')
+
+def on_message(client, userdata, message):
+    global carga
+    carga = int(message.payload.decode())
+    client.disconnet()
+
+
+ # parte da conexão entre dois bricks
 
 
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code " + str(rc))
-    client.subscribe("topic/test")
 
-
-def on_message(client, userdata, msg):
-    if msg.payload.decode() == "Hello world!":
-        print("Yes!")
-        client.disconnect()
+def Conectar(client):
+    client.connect("10.42.0.243", 1883, 60)
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.loop_start()
+def Desconectar(client):
+    client.loop_stop()
+    client.disconnect()
 
 
 def mfrentemenor():
+    #volta so um pouco para tras
     motor_dir.run_to_rel_pos(position_sp=75, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
 
 def EgiroVerde():
+    #gira para a esquerda
     motor_esq.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     sleep(0.5)
@@ -67,9 +76,9 @@ def EgiroVerde():
     motor_dir.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-
 def DgiroVerde():
 
+    #gira para a direita
     motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
     sleep(0.5)
@@ -78,27 +87,30 @@ def DgiroVerde():
     motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-
 def mtras():
+    #volta um pouco para tras
+
     motor_dir.run_to_rel_pos(position_sp=-75, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=-75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
 
 def obstaculo():
+    global carga
     KPO = 6
     TPO = 100
     KIO = 0
     KDO = 0
     SPO = 15
     V_MAX_MOTOR=1000
-    VALOR_MAX_CONTROL = V_MAX_MOTOR - TPO  # é o que define sua potencia para girar, se aumentar o TP terá que aumentar a constante que
-    # subtrai o TP
+    VALOR_MAX_CONTROL = V_MAX_MOTOR - TPO
+
 
     pid = PID(KPO, KIO, KDO, setpoint=SPO)
     lista1 = []
     try:
 
-        while True:
+        while (carga != 1):
+            print('c:',carga)
             valor = ultra2.value()
             control = pid(valor)
             lista1.append(round(control))
@@ -107,6 +119,7 @@ def obstaculo():
                 control = VALOR_MAX_CONTROL
             elif (control < -VALOR_MAX_CONTROL):
                 control = -VALOR_MAX_CONTROL
+
 
             motor_esq.run_forever(speed_sp=TPO)
             motor_dir.run_forever(speed_sp=TPO - control)
@@ -124,21 +137,15 @@ def obstaculo():
         arq.close()
 
 def mfrente():
+    #ir para frente
     motor_dir.run_to_rel_pos(position_sp=140, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=140, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-def mgirodi():
-    motor_esq.run_to_rel_pos(position_sp=450, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
-    sleep(0.9)
-
-def mgiroesq():
-    motor_esq.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
-    sleep(0.9)
-
 def GirarAteVerObstaculo():
+
+    #vai da um giro de 90
+
     motor_esq.run_to_rel_pos(position_sp=440, speed_sp=200, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=-440, speed_sp=200, stop_action="hold")
     sleep(0.5)
@@ -159,18 +166,6 @@ def GirarAteVerObstaculo():
     motor_dir.run_to_rel_pos(position_sp=-90, speed_sp=200, stop_action="hold")
     sleep(0.5)
 
-def GirarAteNVerObstaculo():
-
-    while (ultra2.value() < 1000 ):
-        giroDir()
-
-def tras():
-    # Função para que o robô ande para a frente por ângulo
-
-    motor_dir.run_to_rel_pos(position_sp=-70, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-70, speed_sp=400+CORRECAO_MOTOR, stop_action="hold")
-    sleep(0.5)
-
 def frenteMenor():
     # Função que será utilizada para ajudar no auxilio da finalização dos obstáculo.
 
@@ -184,33 +179,6 @@ def frenteMenor():
 
     motor_dir.run_to_rel_pos(position_sp=-70, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=-70, speed_sp=400, stop_action="hold")
-    sleep(0.5)
-
-def giroDir():
-    # Faz com que o robô ande e se ajuste na linha para a direita
-    motor_esq.run_to_rel_pos(position_sp=180, speed_sp=200, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=200, stop_action="hold")
-
-def giroEsq():
-    # Faz com quê o robo gire para á esquerda
-
-    motor_dir.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
-    sleep(0.5)
-
-    motor_dir.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
-    sleep(0.5)
-
-    motor_dir.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
-    sleep(0.5)
-
-def frente():
-    # Faz com que o robô ande pare trás (positivo)
-
-    motor_dir.run_to_rel_pos(position_sp=240, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=240, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def stop():
@@ -245,120 +213,6 @@ def twoverde():
     motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-def verde():
-
-        #Função para executar 90º de acordo com qual sensor ele vê o verde
-
-        sensor_esq.mode = 'COL-COLOR'
-        sensor_dir.mode = 'COL-COLOR'
-
-        verdeE = sensor_esq.value()
-        verdeD = sensor_dir.value()
-
-
-        if((verdeE==3) and (verdeD==3)):
-        #condição para verificar se há dois verdes
-
-                twoverde()
-
-        elif(verdeE==3): #condição caso ele veja verde apenas com o sensor esquerdo
-
-                #Primeiro anda um pouco para trás para verifica se a linha de tras é branca ou preta
-
-                """
-                        TAVA  70 , COLOCOU 80 e melhorou, agora retornou para 70  !
-                """
-                motor_dir.run_to_rel_pos(position_sp=70, speed_sp=400, stop_action="hold")
-                motor_esq.run_to_rel_pos(position_sp=70, speed_sp=400, stop_action="hold")
-                sleep(0.5)
-
-                stop()
-
-                if ((sensor_esq.value() == 1 ) and (sensor_dir.value() == 6)):
-
-                        motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
-                        motor_dir.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-                        motor_dir.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-                        motor_esq.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-
-
-
-                elif (sensor_esq.value() == 1):
-                #caso a linha atras seja preta ,ele compensa o que andou para tras para ignorar esse verde ( verde pós preto )
-
-                        motor_dir.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-                        motor_esq.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-
-                        sleep(0.5)
-
-                elif(sensor_esq.value() == 6):
-                #caso  a linha atras seja branca , quer dizer que é um verde normal , ou seja ele executa a funça normalmente
-
-                        Sound.beep()
-
-                        motor_esq.run_to_rel_pos(position_sp=-50, speed_sp=400, stop_action="hold")
-                        motor_dir.run_to_rel_pos(position_sp=-50, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-                        motor_dir.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
-                        motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-                        motor_esq.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
-                        motor_dir.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-
-        elif(verdeD==3):
-
-                motor_dir.run_to_rel_pos(position_sp=80, speed_sp=200, stop_action="hold")
-                motor_esq.run_to_rel_pos(position_sp=80, speed_sp=200, stop_action="hold")
-                sleep(0.5)
-
-                stop()
-
-                if ((sensor_dir.value() == 1 ) and (sensor_esq.value() == 6)):
-
-                        motor_esq.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
-                        motor_dir.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-                        motor_dir.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-                        motor_esq.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-
-
-                elif (sensor_dir.value() == 1):
-                #caso a linha atras seja preta ,ele compensa o que andou para tras para ignorar esse verde ( verde pós preto )
-
-                        motor_dir.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-                        motor_esq.run_to_rel_pos(position_sp=-150, speed_sp=400, stop_action="hold")
-
-                        sleep(0.5)
-
-                elif(sensor_dir.value() == 6) :
-                #caso  a linha atras seja branca , quer dizer que é um verde normal , ou seja ele executa a funça normalmente
-
-                        Sound.beep()
-
-                        motor_esq.run_to_rel_pos(position_sp=-50, speed_sp=400, stop_action="hold")
-                        motor_dir.run_to_rel_pos(position_sp=-50, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-                        motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
-                        motor_dir.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-                        motor_dir.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
-                        motor_esq.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
-                        sleep(0.5)
-
-
-
-        sensor_esq.mode = 'COL-REFLECT'
-        sensor_dir.mode = 'COL-REFLECT'
-
 def verde2():
 
     sensor_esq.mode = 'COL-COLOR'
@@ -368,9 +222,12 @@ def verde2():
     verdeD = sensor_dir.value()
 
     if(verdeE==3 and verdeD==3):
+
+    #se ele ver dois verdes
         twoverde()
 
     elif (verdeE == 3 or verdeD==3):
+    #se ele ver algum verde de ambos os lados
         stop()
         Sound.beep()
         mtras()
@@ -381,18 +238,24 @@ def verde2():
 
 
         if(verdeD== 1 and verdeE ==1):
+            #caso ele recue e veja preto nos dois sensores, ignore-os
             mfrente()
 
         elif (verdeD== 6 and verdeE ==6):
+            #caso ele recue veja branco nos dois sensores, ele avançará pra frente
             mfrentemenor()
+
             verdeEs = sensor_esq.value()
             verdeDi = sensor_dir.value()
+
             stop()
 
             if (verdeDi == 3 and verdeEs == 6):
+                # se ele ver verde do lado direito
                 mfrente()
                 DgiroVerde()
             elif (verdeDi== 6 and verdeEs==3):
+                #se ele ver verde do lado esquerdo
                 mfrente()
                 EgiroVerde()
 
@@ -416,7 +279,7 @@ def calibragem(button2):
         motor_dir.stop()
         motor_esq.stop()
 
-def resinha():
+def ReObstaculo():
     motor_dir.run_to_rel_pos(position_sp=-75, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=-75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
@@ -429,40 +292,31 @@ def executar(TP, SP):
         while True:
             if ultra1.value() <= 50:
 
+            #parte do obstaculo
                 stop()
                 Sound.beep()
-                resinha()
+                ReObstaculo()
                 GirarAteVerObstaculo()
                 stop()
+                client = mqtt.Client()
+                Conectar(client)
                 obstaculo()
-
+                Desconectar(client)
+        #parte do PID
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
-            #print("control {}".format(control))
-            '''
-            client = mqtt.Client()
-            client.connect("THE_IP_ADDRESS_OF_OUR_BROKER", 1883, 60)
 
-            client.on_connect = on_connect
-            client.on_message = on_message
-
-            client.loop_forever()
-            '''
-            # codigo para identificar verde
-
-
+        #parte do verde
             if ((sensor_dir.value() == 10 or sensor_dir.value() == 9 ) or (sensor_esq.value() == 9 or sensor_esq.value() == 10)):
                 verde2()
 
-
-            # condições para evitar ultrapassar o valor máximo do motor
+        # condições para evitar ultrapassar o valor máximo do motor
             if (control > VALOR_MAX_CONTROL):
                 control = VALOR_MAX_CONTROL
             elif (control < -VALOR_MAX_CONTROL) :
                 control= -VALOR_MAX_CONTROL
 
-            #condição para não sair da linha, usando o sensor do meio
-
+        #condição para não sair da linha, usando o sensor do meio
             motor_esq.run_forever(speed_sp=TP - control)
             motor_dir.run_forever(speed_sp=TP + control + CORRECAO_MOTOR)
 

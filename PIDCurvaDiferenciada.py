@@ -7,7 +7,6 @@ from simple_pid import PID
 import paho.mqtt.client as mqtt
 from csv import*
 
-c=0
 system('setfont Lat15-TerminusBold14') # estilização
 KP = 11 #modifiquei o kp: tava 12
 KI = 0
@@ -15,11 +14,16 @@ KD = 0
 TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 10
+carga =-1
+TPDES=400
 
 
 # Motores
 motor_dir = LargeMotor('outB')
 motor_esq = LargeMotor('outD')
+garra =MediumMotor('outC')
+
+#sensores
 sensor_esq = ColorSensor("in1")
 sensor_dir = ColorSensor("in2")
 
@@ -32,7 +36,7 @@ ultra2= UltrasonicSensor('in4')
 
 # Modo Color. * 0=desconhecido, 1=preto, 2=azul, 3=verde, 4=amarelo, 5=vermelho, 6=branco, 7=marrom
 
-carga = 0
+
 
 def on_connect(client, userdata, flags,message):
 
@@ -44,21 +48,42 @@ def on_message(client, userdata, message):
     carga = int(message.payload.decode())
     client.disconnet()
 
+def EgiroObs():
+    motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+    sleep(0.5)
 
- # parte da conexão entre dois bricks
+def DgiroObs():
+    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    sleep(0.5)
 
+    motor_esq.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
+    sleep(0.5)
 
+    motor_esq.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
+    sleep(0.5)
 
+def PosObstaculo():
+    stop()
+    EgiroObs()
+    stop()
+    mfrente()
+    mfrente()
+    DgiroObs()
+    stop()
 
 def Conectar(client):
     client.connect("10.42.0.243", 1883, 60)
     client.on_connect = on_connect
     client.on_message = on_message
     client.loop_start()
+
 def Desconectar(client):
     client.loop_stop()
     client.disconnect()
-
 
 def mfrentemenor():
     #volta so um pouco para tras
@@ -110,7 +135,6 @@ def obstaculo():
     try:
 
         while (carga != 1):
-            print('c:',carga)
             valor = ultra2.value()
             control = pid(valor)
             lista1.append(round(control))
@@ -123,6 +147,7 @@ def obstaculo():
 
             motor_esq.run_forever(speed_sp=TPO)
             motor_dir.run_forever(speed_sp=TPO - control)
+        PosObstaculo()
 
 
     except KeyboardInterrupt:
@@ -280,19 +305,42 @@ def calibragem(button2):
         motor_esq.stop()
 
 def ReObstaculo():
-    motor_dir.run_to_rel_pos(position_sp=-75, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-40, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-40, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
+
+def descer ():
+
+    garra.run_to_abs_pos(speed_sp=TPDES)
+    garra.run_to_abs_pos(speed_sp=TPDES)
+    garra.run_to_abs_pos(speed_sp=TPDES)
+
 
 def executar(TP, SP):
     pid = PID(KP, KI, KD, setpoint=SP)
     lista = []
+    cont=0
 
     try:
         while True:
-            if ultra1.value() <= 50:
 
-            #parte do obstaculo
+            print("antes E: ",sensor_esq.value())
+            print("antes D: ", sensor_dir.value())
+
+            if((sensor_dir.value()>=20 and sensor_dir.value() <=40) and (sensor_esq.value()>=20 and sensor_esq.value() <=40)):
+                sensor_esq.mode = 'COL-COLOR'
+                sensor_dir.mode = 'COL-COLOR'
+                print('E:',sensor_esq.value())
+                print('D:',sensor_dir.value())
+                if(sensor_dir.value() == 0 and sensor_esq.value() == 6):
+                    descer()
+                    Desconectar(client)
+
+
+        # parte do obstaculo
+
+
+            if ultra1.value() <= 50:
                 stop()
                 Sound.beep()
                 ReObstaculo()
@@ -302,6 +350,9 @@ def executar(TP, SP):
                 Conectar(client)
                 obstaculo()
                 Desconectar(client)
+                global carga
+                carga =0
+
         #parte do PID
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
@@ -316,7 +367,7 @@ def executar(TP, SP):
             elif (control < -VALOR_MAX_CONTROL) :
                 control= -VALOR_MAX_CONTROL
 
-        #condição para não sair da linha, usando o sensor do meio
+        #motores com o PID
             motor_esq.run_forever(speed_sp=TP - control)
             motor_dir.run_forever(speed_sp=TP + control + CORRECAO_MOTOR)
 

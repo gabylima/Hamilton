@@ -17,7 +17,7 @@ client.loop_start()
 try:
     while True:
         valor =sensor_obs.value()
-        if(valor== 1):
+        if(valor== 1 or valor ==0):
             #client.publish("topic/test", str());
 
             #message = pack("sensor obstaculo",valor, time.time())

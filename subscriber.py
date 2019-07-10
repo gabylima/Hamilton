@@ -17,7 +17,6 @@ def on_message(client, userdata, message):
     client.disconnet()
 
 
-
 client = mqtt.Client()
 client.connect("10.42.0.243", 1883, 60)
 print('Conectado.')

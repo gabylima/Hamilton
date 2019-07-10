@@ -5,7 +5,8 @@ from time import sleep
 from os import system
 from simple_pid import PID
 import paho.mqtt.client as mqtt
-from csv import*
+
+from csv import *
 
 system('setfont Lat15-TerminusBold14') # estilização
 KP = 11 #modifiquei o kp: tava 12
@@ -14,14 +15,15 @@ KD = 0
 TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 10
-carga =-1
-TPDES=400
+carga =900
+TPDES=200
+cont = 0
 
 
 # Motores
 motor_dir = LargeMotor('outB')
 motor_esq = LargeMotor('outD')
-garra =MediumMotor('outC')
+garra =MediumMotor('outA')
 
 #sensores
 sensor_esq = ColorSensor("in1")
@@ -36,10 +38,75 @@ ultra2= UltrasonicSensor('in4')
 
 # Modo Color. * 0=desconhecido, 1=preto, 2=azul, 3=verde, 4=amarelo, 5=vermelho, 6=branco, 7=marrom
 
+def retinho():
+    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=600, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=600, stop_action="hold")
+    sleep(0.5)
 
+
+def Restart():
+    button = Button()
+    if button.left:
+        while True:
+            stop()
+            if button.right:
+                break
+
+def sala3():
+    descer()
+
+    try:
+        ul = ultra1.value()
+
+        while True:
+
+
+            if(ul >500):
+                retinho()
+
+            elif(ul < 500):
+
+                EgiroObs()
+                EgiroObs()
+                EgiroObs()
+                EgiroObs()
+                EgiroObs()
+
+
+
+
+
+    except KeyboardInterrupt:
+
+        motor_dir.stop()
+        motor_esq.stop()
+
+
+
+
+def VerificaSala3(c):
+    if (ultra2.value() >= 300 and carga <= 1 and c >= 9):
+        return 1
+    elif ((ultra2.value() >= 30 and ultra2.value() <= 78) and carga >= 80 and c >= 9):
+        sala3()
+        return 1
+    elif (ultra2.value() >= 300 and carga >= 80):
+        global cont
+        cont =0
+
+def ConectarInfra(client):
+    client.connect("10.42.0.243", 1883, 60)
+    client.on_connect = on_connect_infra
+    client.on_message = on_message
+    client.loop_start()
+
+def on_connect_infra(client, userdata, flags,message):
+    client.unsubscribe("topic/sensors")
+    client.subscribe("topic/infra")
+    print('conectado infra')
 
 def on_connect(client, userdata, flags,message):
-
+    client.unsubscribe("topic/infra")
     client.subscribe("topic/sensors")
     print('conectado')
 
@@ -62,8 +129,8 @@ def DgiroObs():
     motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-    motor_esq.run_to_rel_pos(position_sp=180, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-180, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=90, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-90, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def PosObstaculo():
@@ -238,7 +305,7 @@ def twoverde():
     motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-def verde2():
+def verde2(SP):
 
     sensor_esq.mode = 'COL-COLOR'
     sensor_dir.mode = 'COL-COLOR'
@@ -247,20 +314,43 @@ def verde2():
     verdeD = sensor_dir.value()
 
     if(verdeE==3 and verdeD==3):
-
     #se ele ver dois verdes
         twoverde()
 
     elif (verdeE == 3 or verdeD==3):
     #se ele ver algum verde de ambos os lados
+        sensor_esq.mode = 'COL-REFLECT'
+        sensor_dir.mode = 'COL-REFLECT'
         stop()
         Sound.beep()
         mtras()
         stop()
+        KPO = 11
+        TPO = 0
+        KIO = 0
+        KDO = 0
+        SPO = SP
+        V_MAX_MOTOR = 1000
+        VALOR_MAX_CONTROL = V_MAX_MOTOR - TPO
+
+        pid = PID(KPO, KIO, KDO, setpoint=SPO)
+        dif = sensor_esq.value() - sensor_dir.value()
+        control = pid(dif)
+
+        if (control > VALOR_MAX_CONTROL):
+            control = VALOR_MAX_CONTROL
+        elif (control < -VALOR_MAX_CONTROL):
+            control = -VALOR_MAX_CONTROL
+
+        motor_esq.run_forever(speed_sp=TPO - control)
+        motor_dir.run_forever(speed_sp=TPO + control)
+
+
+        sensor_esq.mode = 'COL-COLOR'
+        sensor_dir.mode = 'COL-COLOR'
 
         verdeE = sensor_esq.value()
         verdeD = sensor_dir.value()
-
 
         if(verdeD== 1 and verdeE ==1):
             #caso ele recue e veja preto nos dois sensores, ignore-os
@@ -309,37 +399,28 @@ def ReObstaculo():
     motor_esq.run_to_rel_pos(position_sp=-40, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
 
-def descer ():
+def descer():
+    garra.run_timed(time_sp = 1500, speed_sp=-TPDES)
 
-    garra.run_to_abs_pos(speed_sp=TPDES)
-    garra.run_to_abs_pos(speed_sp=TPDES)
-    garra.run_to_abs_pos(speed_sp=TPDES)
-
+def subir():
+    garra.run_timed(time_sp=1500, speed_sp=+TPDES)
 
 def executar(TP, SP):
     pid = PID(KP, KI, KD, setpoint=SP)
     lista = []
-    cont=0
-
+    client = mqtt.Client()
+    ConectarInfra(client)
+    button = Button()
     try:
         while True:
+            Restart()
 
-            print("antes E: ",sensor_esq.value())
-            print("antes D: ", sensor_dir.value())
-
-            if((sensor_dir.value()>=20 and sensor_dir.value() <=40) and (sensor_esq.value()>=20 and sensor_esq.value() <=40)):
-                sensor_esq.mode = 'COL-COLOR'
-                sensor_dir.mode = 'COL-COLOR'
-                print('E:',sensor_esq.value())
-                print('D:',sensor_dir.value())
-                if(sensor_dir.value() == 0 and sensor_esq.value() == 6):
-                    descer()
-                    Desconectar(client)
-
+            if((ultra2.value()>=36 and ultra2.value()<=80)and(carga<=1)):
+                global cont
+                cont=cont+1
+            s3= VerificaSala3(cont)
 
         # parte do obstaculo
-
-
             if ultra1.value() <= 50:
                 stop()
                 Sound.beep()
@@ -351,15 +432,16 @@ def executar(TP, SP):
                 obstaculo()
                 Desconectar(client)
                 global carga
-                carga =0
+                carga =900
 
         #parte do PID
             dif = sensor_esq.value() - sensor_dir.value()
             control = pid(dif)
 
+
         #parte do verde
-            if ((sensor_dir.value() == 10 or sensor_dir.value() == 9 ) or (sensor_esq.value() == 9 or sensor_esq.value() == 10)):
-                verde2()
+            if ((sensor_dir.value() == 10 or sensor_dir.value() == 12 ) or (sensor_esq.value() == 10 or sensor_esq.value() == 12)):
+                verde2(SP)
 
         # condições para evitar ultrapassar o valor máximo do motor
             if (control > VALOR_MAX_CONTROL):
@@ -372,14 +454,18 @@ def executar(TP, SP):
             motor_dir.run_forever(speed_sp=TP + control + CORRECAO_MOTOR)
 
 
-        lista.append(round(control))
+        #lista.append(round(control))
 
+            if(s3==1):
+                break
+
+        sala3()
 
     except KeyboardInterrupt:
 
         motor_dir.stop()
         motor_esq.stop()
-
+        print('cont:',cont)
         arq = open('rocha.csv', 'w')
         for i in lista:
             arq.write(str(i)+',\n')
@@ -399,7 +485,7 @@ def menu():
         if button2.left:
             system("clear")
             SP = calibragem(button2)
-            print('SP atualizado')
+            print('SP atualizado:',SP)
             sleep(0.01)
             print("<< Calibrar | Iniciar >>")
 

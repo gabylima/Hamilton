@@ -16,7 +16,7 @@ TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 10
 carga =900
-TPDES=200
+TPDES=900
 cont = 0
 
 
@@ -38,11 +38,20 @@ ultra2= UltrasonicSensor('in4')
 
 # Modo Color. * 0=desconhecido, 1=preto, 2=azul, 3=verde, 4=amarelo, 5=vermelho, 6=branco, 7=marrom
 
-def retinho():
-    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=600, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=600, stop_action="hold")
+def reto():
+    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
+
+def vira():
+    motor_esq.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+    motor_esq.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    sleep(0.5)
 
 def Restart():
     button = Button()
@@ -54,15 +63,27 @@ def Restart():
 
 def sala3():
     descer()
-
     try:
-        ul = ultra1.value()
-
         while True:
+            ul = ultra1.value()
+            if (ul > 30) :
+                #motor_esq.run_forever(speed_sp=TP)
+                #motor_dir.run_forever(speed_sp=TP)
+                reto()
+                sleep(0.9)
+                subir()
+                sleep(0.9)
+                descer()
+
+            elif(ul<=30):
+                stop()
 
 
+
+
+        '''
             if(ul >500):
-                retinho()
+                reto()
 
             elif(ul < 500):
 
@@ -72,10 +93,7 @@ def sala3():
                 EgiroObs()
                 EgiroObs()
 
-
-
-
-
+        '''
     except KeyboardInterrupt:
 
         motor_dir.stop()
@@ -85,12 +103,12 @@ def sala3():
 
 
 def VerificaSala3(c):
-    if (ultra2.value() >= 300 and carga <= 1 and c >= 9):
+
+    if (ultra2.value() >= 300 and carga <= 2 and c >= 9):
         return 1
-    elif ((ultra2.value() >= 30 and ultra2.value() <= 78) and carga >= 80 and c >= 9):
-        sala3()
+    elif ((ultra2.value() >= 30 and ultra2.value() <= 78) and carga >= 70 and c >= 9):
         return 1
-    elif (ultra2.value() >= 300 and carga >= 80):
+    elif (ultra2.value() >= 300 and carga >= 70):
         global cont
         cont =0
 
@@ -414,8 +432,7 @@ def executar(TP, SP):
     try:
         while True:
             Restart()
-
-            if((ultra2.value()>=36 and ultra2.value()<=80)and(carga<=1)):
+            if((ultra2.value()>=36 and ultra2.value()<=80)and(carga<=2)):
                 global cont
                 cont=cont+1
             s3= VerificaSala3(cont)
@@ -457,6 +474,7 @@ def executar(TP, SP):
         #lista.append(round(control))
 
             if(s3==1):
+                print(cont)
                 break
 
         sala3()

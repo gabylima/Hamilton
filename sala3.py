@@ -38,7 +38,7 @@ ultra2= UltrasonicSensor('in4')
 
 
 garra =MediumMotor('outA')
-
+TPDES=900
 
 def stop():
     # O robô para de se mover com os dois motores ao mesmo tempo
@@ -48,10 +48,7 @@ def stop():
     sleep(0.5)
 
 def descer ():
-
-    garra.run_to_abs_pos(speed_sp=TPDES)
-    garra.run_to_abs_pos(speed_sp=TPDES)
-    garra.run_to_abs_pos(speed_sp=TPDES)
+    garra.run_timed(time_sp=1500, speed_sp=-TPDES)
 def subir ():
 
     garra.run_to_abs_pos(speed_sp=-TPSUB)
@@ -59,6 +56,6 @@ def subir ():
     garra.run_to_abs_pos(speed_sp=-TPSUB)
 
 
-subir()
+descer()
 
 

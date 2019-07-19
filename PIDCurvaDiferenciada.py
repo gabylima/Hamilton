@@ -5,7 +5,7 @@ from time import sleep
 from os import system
 from simple_pid import PID
 import paho.mqtt.client as mqtt
-
+import  struct
 from csv import *
 
 system('setfont Lat15-TerminusBold14') # estilização
@@ -15,15 +15,19 @@ KD = 0
 TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 10
-carga =900
+carga =" "
 TPDES=900
+TPDES1=100
 cont = 0
 
 
 # Motores
 motor_dir = LargeMotor('outB')
 motor_esq = LargeMotor('outD')
-garra =MediumMotor('outA')
+#garra =MediumMotor('outA')
+garra = LargeMotor('outA')
+#garra2 = MediumMotor('outC')
+
 
 #sensores
 sensor_esq = ColorSensor("in1")
@@ -42,7 +46,6 @@ def reto():
     motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     sleep(0.5)
-
 
 def vira():
     motor_esq.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
@@ -99,39 +102,22 @@ def sala3():
         motor_dir.stop()
         motor_esq.stop()
 
-
-
-
 def VerificaSala3(c):
-
-    if (ultra2.value() >= 300 and carga <= 2 and c >= 9):
+    print(carga[1])
+    if (ultra2.value() >= 300 and carga[1] <= 4 and c >= 9):
         return 1
-    elif ((ultra2.value() >= 30 and ultra2.value() <= 78) and carga >= 70 and c >= 9):
+    elif ((ultra2.value() >= 30 and ultra2.value() <= 78) and carga[1] >= 70 and c >= 9):
         return 1
-    elif (ultra2.value() >= 300 and carga >= 70):
+    elif (ultra2.value() >= 300 and carga[1] >= 70):
         global cont
-        cont =0
-
-def ConectarInfra(client):
-    client.connect("10.42.0.243", 1883, 60)
-    client.on_connect = on_connect_infra
-    client.on_message = on_message
-    client.loop_start()
-
-def on_connect_infra(client, userdata, flags,message):
-    client.unsubscribe("topic/sensors")
-    client.subscribe("topic/infra")
-    print('conectado infra')
+        cont = 0
 
 def on_connect(client, userdata, flags,message):
-    client.unsubscribe("topic/infra")
-    client.subscribe("topic/sensors")
-    print('conectado')
+    client.subscribe("topic/teste")
 
 def on_message(client, userdata, message):
     global carga
-    carga = int(message.payload.decode())
-    client.disconnet()
+    carga = unpack('ii', message.payload)
 
 def EgiroObs():
     motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
@@ -219,7 +205,7 @@ def obstaculo():
     lista1 = []
     try:
 
-        while (carga != 1):
+        while (carga["sensor_cor"] != 1):
             valor = ultra2.value()
             control = pid(valor)
             lista1.append(round(control))
@@ -373,16 +359,16 @@ def verde2(SP):
         if(verdeD== 1 and verdeE ==1):
             #caso ele recue e veja preto nos dois sensores, ignore-os
             mfrente()
-
+        elif (verdeD == 1 and verdeE == 6):
+            mfrente()
+        elif(verdeD == 6 and verdeE == 1):
+            mfrente()
         elif (verdeD== 6 and verdeE ==6):
             #caso ele recue veja branco nos dois sensores, ele avançará pra frente
             mfrentemenor()
-
             verdeEs = sensor_esq.value()
             verdeDi = sensor_dir.value()
-
             stop()
-
             if (verdeDi == 3 and verdeEs == 6):
                 # se ele ver verde do lado direito
                 mfrente()
@@ -418,25 +404,33 @@ def ReObstaculo():
     sleep(0.5)
 
 def descer():
-    garra.run_timed(time_sp = 1500, speed_sp=-TPDES)
+    garra.run_timed(time_sp = 1500, speed_sp=-TPDES1)
+    garra2.run_timed(time_sp = 1500, speed_sp=-TPDES)
+
+    #garra.run_to_rel_pos(position_sp=-75, speed_sp=400, stop_action="hold")
 
 def subir():
-    garra.run_timed(time_sp=1500, speed_sp=+TPDES)
+    garra2.run_timed(time_sp=1500, speed_sp=TPDES)
+    garra.run_timed(time_sp=1500, speed_sp=TPDES1)
+
+    #garra.run_to_rel_pos(position_sp=75, speed_sp=400, stop_action="hold")
 
 def executar(TP, SP):
+    print(carga)
     pid = PID(KP, KI, KD, setpoint=SP)
     lista = []
     client = mqtt.Client()
-    ConectarInfra(client)
-    button = Button()
+    Conectar(client)
+    sleep(0.5)
     try:
         while True:
             Restart()
-            if((ultra2.value()>=36 and ultra2.value()<=80)and(carga<=2)):
+            print('sensores:', carga)
+            if((ultra2.value()>=36 and ultra2.value()<=80)and(carga[1]<=2)):
                 global cont
                 cont=cont+1
-            s3= VerificaSala3(cont)
-
+                print(carga[1])
+            s3 = VerificaSala3(cont)
         # parte do obstaculo
             if ultra1.value() <= 50:
                 stop()
@@ -444,12 +438,10 @@ def executar(TP, SP):
                 ReObstaculo()
                 GirarAteVerObstaculo()
                 stop()
-                client = mqtt.Client()
-                Conectar(client)
+                client2 = mqtt.Client()
+                Conectar(client2)
                 obstaculo()
-                Desconectar(client)
-                global carga
-                carga =900
+                Desconectar(client2)
 
         #parte do PID
             dif = sensor_esq.value() - sensor_dir.value()
@@ -472,10 +464,9 @@ def executar(TP, SP):
 
 
         #lista.append(round(control))
-
             if(s3==1):
-                print(cont)
                 break
+
 
         sala3()
 

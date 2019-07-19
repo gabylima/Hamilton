@@ -4,6 +4,7 @@ from ev3dev.ev3 import *
 
 
 import paho.mqtt.client as mqtt
+import struct
 
 sensor_obs = ColorSensor('in1')
 infra = InfraredSensor()
@@ -14,29 +15,19 @@ client.connect("localhost",1883,60)
 
 client.loop_start()
 
-
-
+lista = [1,2]
+tupla = (1,2)
 try:
     while True:
+
         valor =sensor_obs.value()
         valor2 =infra.value()
 
-        if(valor== 1):
-            #client.publish("topic/test", str());
-            #message = pack("sensor obstaculo",valor, time.time())
+        c=struct.pack('ii',valor,valor2)
+        client.publish("topic/teste",c)
+        print(struct.unpack('ii',c))
 
-            client.publish("topic/sensors", str(valor))
-            print('sensor_cor',valor)
-            time.sleep(0.1)
-
-        elif (infra.value() <=4):
-            client.publish("topic/infra", str(valor2))
-            print('infra:',valor2)
-            time.sleep(0.1)
-
-        else:
-            print('i:', infra.value())
-            print(valor)
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     pass

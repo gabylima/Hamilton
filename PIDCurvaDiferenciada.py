@@ -12,9 +12,9 @@ system('setfont Lat15-TerminusBold14') # estilização
 KP = 11 #modifiquei o kp: tava 12
 KI = 0
 KD = 0
-TP = 210.0 #modifiquei tp: tava 280
+TP = 220.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
-CORRECAO_MOTOR = 10
+CORRECAO_MOTOR = 0
 carga =" "
 TPDES=900
 TPDES1=100
@@ -26,7 +26,7 @@ motor_dir = LargeMotor('outB')
 motor_esq = LargeMotor('outD')
 #garra =MediumMotor('outA')
 garra = LargeMotor('outA')
-#garra2 = MediumMotor('outC')
+garra2 = MediumMotor('outC')
 
 
 #sensores
@@ -81,22 +81,6 @@ def sala3():
             elif(ul<=30):
                 stop()
 
-
-
-
-        '''
-            if(ul >500):
-                reto()
-
-            elif(ul < 500):
-
-                EgiroObs()
-                EgiroObs()
-                EgiroObs()
-                EgiroObs()
-                EgiroObs()
-
-        '''
     except KeyboardInterrupt:
 
         motor_dir.stop()
@@ -147,7 +131,7 @@ def PosObstaculo():
     stop()
 
 def Conectar(client):
-    client.connect("10.42.0.243", 1883, 60)
+    client.connect("10.42.0.183", 1883, 60)
     client.on_connect = on_connect
     client.on_message = on_message
     client.loop_start()
@@ -429,7 +413,8 @@ def executar(TP, SP):
             if((ultra2.value()>=36 and ultra2.value()<=80)and(carga[1]<=2)):
                 global cont
                 cont=cont+1
-                print(carga[1])
+            print("cont:",cont)
+            print("sensor:",carga[1])
             s3 = VerificaSala3(cont)
         # parte do obstaculo
             if ultra1.value() <= 50:

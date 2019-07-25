@@ -9,7 +9,11 @@ import struct
 sensor_obs = ColorSensor('in1')
 infra = InfraredSensor()
 sensor_obs.mode = 'COL-COLOR'
-infra.mode_ir_prox = 'IR-PROX'
+infra.mode = 'IR-PROX'
+
+
+
+
 client = mqtt.Client()
 client.connect("localhost",1883,60)
 

@@ -16,22 +16,34 @@ TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 10
 carga =-1
-TPDES=100
+#TPDES=100
+TPDES=300
 TPDES1=300
 
-TPSUB=100
+#TPSUB=100
+TPSUB=900
 TPSUB1=80
 
 
 # Motores
 motor_dir = LargeMotor('outB')
 motor_esq = LargeMotor('outD')
-garra = LargeMotor('outA')
-garra2 = MediumMotor('outC')
+#garra = LargeMotor('outA')
+#garra2 = MediumMotor('outC')
+
+garra2 = MediumMotor('outA')
 
 #sensores
 ultra1 = UltrasonicSensor('in3')
 ultra2= UltrasonicSensor('in4')
+
+def subirr():
+    garra2.run_timed(time_sp=1500, speed_sp=TPSUB)
+    sleep(0.9)
+
+
+
+
 def descer ():
     garra.run_timed(time_sp=1500, speed_sp=TPDES1)
     sleep(0.9)
@@ -123,9 +135,11 @@ def stop():
 
 def frente():
 
-    motor_esq.run_to_rel_pos(position_sp=100, speed_sp=200, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=100, speed_sp=200, stop_action="hold")
-    sleep(0.5)
+    motor_esq.run_to_rel_pos(position_sp=100, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=100, speed_sp=400, stop_action="hold")
+    sleep(0.3)
+
+
 
 
 def mdescer():
@@ -171,6 +185,7 @@ def manual():
                 subir()
                 sleep(0.5)
                 stop()
+
             if (valor <= 60):
                 stop()
                 Egiro()
@@ -184,9 +199,116 @@ def manual():
         motor_dir.stop()
 
 
-mover()
+#mover()
 #manual()
 
-#descer()
+#subirr()
 #sleep(0.5)
 #subir()
+
+def descerr():
+
+    garra2.run_timed(time_sp=1500, speed_sp=-TPDES)
+    sleep(0.9)
+
+def frentee():
+    for i in range(0, 30):
+        frente()
+
+    stop()
+
+def re ():
+    motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def reFinal():
+    motor_esq.run_to_rel_pos(position_sp=-200, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-200, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
+
+def giroE():
+
+    motor_esq.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def frentinha():
+    motor_esq.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def giroD():
+    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+def sala3 ():
+
+    try:
+
+        descerr()
+
+        #1º etapa
+
+        frentee()
+        re()
+        giroE()
+        sleep(1.5)
+        frentinha()
+        sleep(2.0)
+        giroE()
+        sleep(1.5)
+
+        #2ºetapa, depois que girar totalmente
+
+        frentee()
+        sleep(1.5)
+        re()
+        giroD()
+        sleep(1.5)
+        frentinha()
+        sleep(2.0)
+        giroD()
+        sleep(1.5)
+
+        #3º etapa, depois de girar totalmente
+
+        frentee()
+        re()
+        giroE()
+        sleep(1.5)
+        frentinha()
+        sleep(2.0)
+        giroE()
+        sleep(1.5)
+
+        #4º etapa, depois de girar totalmente
+
+        frentee()
+        re()
+        giroD()
+        sleep(1.5)
+        frentinha()
+        sleep(2.0)
+        giroD()
+        sleep(1.5)
+
+        #5º etapa, depois de girar totalmente
+
+        frentee()
+
+        #etapa final
+        reFinal()
+        sleep(0.5)
+        subirr()
+
+
+
+
+    except KeyboardInterrupt:
+        motor_esq.stop()
+        motor_dir.stop()
+
+sala3()

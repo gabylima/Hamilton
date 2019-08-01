@@ -11,6 +11,9 @@ infra = InfraredSensor()
 sensor_obs.mode = 'COL-COLOR'
 infra.mode = 'IR-PROX'
 
+sensor_sala3 = ColorSensor('3')
+sensor_sala3.mode='COL-COLOR'
+
 
 
 
@@ -19,17 +22,16 @@ client.connect("localhost",1883,60)
 
 client.loop_start()
 
-lista = [1,2]
-tupla = (1,2)
 try:
     while True:
 
         valor =sensor_obs.value()
         valor2 =infra.value()
+        valor3=sensor_sala3.value()
 
-        c=struct.pack('ii',valor,valor2)
+        c=struct.pack('iii',valor,valor2,valor3)
         client.publish("topic/teste",c)
-        print(struct.unpack('ii',c))
+        print(struct.unpack('iii',c))
 
         time.sleep(0.1)
 

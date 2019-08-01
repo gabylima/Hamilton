@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 import  struct
 from csv import *
 
-system('setfont Lat15-TerminusBold14') # estilização
+#system('setfont Lat15-TerminusBold14') # estilização
 KP = 11 #modifiquei o kp: tava 12
 KI = 0
 KD = 0
@@ -101,7 +101,7 @@ def on_connect(client, userdata, flags,message):
 
 def on_message(client, userdata, message):
     global carga
-    carga = unpack('ii', message.payload)
+    carga = unpack('iii', message.payload)
 
 def EgiroObs():
     motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
@@ -189,7 +189,7 @@ def obstaculo():
     lista1 = []
     try:
 
-        while (carga["sensor_cor"] != 1):
+        while (carga[0] != 1):
             valor = ultra2.value()
             control = pid(valor)
             lista1.append(round(control))

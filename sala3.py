@@ -15,7 +15,7 @@ KD = 0
 TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 10
-carga =-1
+carga =" "
 #TPDES=100
 TPDES=300
 TPDES1=300
@@ -40,9 +40,6 @@ ultra2= UltrasonicSensor('in4')
 def subirr():
     garra2.run_timed(time_sp=1500, speed_sp=TPSUB)
     sleep(0.9)
-
-
-
 
 def descer ():
     garra.run_timed(time_sp=1500, speed_sp=TPDES1)
@@ -140,8 +137,6 @@ def frente():
     sleep(0.3)
 
 
-
-
 def mdescer():
     garra.run_timed(time_sp=1500, speed_sp=TPDES1)
     sleep(0.9)
@@ -214,8 +209,37 @@ def descerr():
 def frentee():
     for i in range(0, 30):
         frente()
+    stop()
+
+def frenteTri():
+    motor_esq.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    sleep(0.3)
+
+def alinha():
+    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def gfrente():
+    client = mqtt.Client()
+    Conectar(client)
+    descerr()
+    for i in range(0, 30):
+        frente()
+        if(carga[2] == 1 and carga[1]>=5):
+            Sound.beep()
+            stop()
+            sleep(0.5)
+            re()
+            re()
+            sleep(0.5)
+            alinha()
+            break
+
 
     stop()
+    Desconectar(client)
 
 def re ():
     motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
@@ -226,8 +250,6 @@ def reFinal():
     motor_esq.run_to_rel_pos(position_sp=-200, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=-200, speed_sp=400, stop_action="hold")
     sleep(0.5)
-
-
 
 def giroE():
 
@@ -244,18 +266,80 @@ def giroD():
     motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
     sleep(0.5)
+
+def girop():
+    motor_esq.run_to_rel_pos(position_sp=-500, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def on_connect(client, userdata, flags, message):
+    client.subscribe("topic/teste")
+
+def on_message(client, userdata, message):
+    global carga
+    carga = unpack('iii', message.payload)
+
+def Conectar(client):
+    client.connect("10.42.0.183", 1883, 60)
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.loop_start()
+
+def Desconectar(client):
+    client.loop_stop()
+    client.disconnect()
+
+def procurar():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+
+    KP= 40
+    TP = 100
+    KIO= 0
+    KD = 0
+    SP = 1
+
+    V_MAX_MOTOR = 1000
+    VALOR_MAX_CONTROL = V_MAX_MOTOR - TP
+
+    pid = PID(KP, KIO, KD, setpoint=SP)
+
+    while True:
+        valor = carga[2]
+        control = pid(valor)
+
+
+        if (control > VALOR_MAX_CONTROL):
+            control = VALOR_MAX_CONTROL
+        elif (control < -VALOR_MAX_CONTROL):
+            control = -VALOR_MAX_CONTROL
+
+        if (carga[2]==1 and carga[1]>=8):
+            print("despejar")
+            break
+
+
+        motor_esq.run_forever(speed_sp=TP + control)
+        motor_dir.run_forever(speed_sp=TP - control)
+
+def mprocurar():
+    while True:
+        valor = ultra1.value()
+
+        if (valor <= 50):
+
+
+
 def sala3 ():
 
     try:
 
-        descerr()
-
         #1º etapa
-
-        frentee()
+        gfrente()
         re()
         giroE()
-        sleep(1.5)
+        sleep(1.0)
         frentinha()
         sleep(2.0)
         giroE()
@@ -265,6 +349,7 @@ def sala3 ():
 
         frentee()
         sleep(1.5)
+        re()
         re()
         giroD()
         sleep(1.5)
@@ -277,6 +362,7 @@ def sala3 ():
 
         frentee()
         re()
+        re()
         giroE()
         sleep(1.5)
         frentinha()
@@ -288,6 +374,7 @@ def sala3 ():
 
         frentee()
         re()
+        re()
         giroD()
         sleep(1.5)
         frentinha()
@@ -296,13 +383,14 @@ def sala3 ():
         sleep(1.5)
 
         #5º etapa, depois de girar totalmente
-
         frentee()
+
+        #if(ultra2.value()>)
 
         #etapa final
         reFinal()
         sleep(0.5)
-        subirr()
+        subir_descer()
 
 
 
@@ -311,4 +399,14 @@ def sala3 ():
         motor_esq.stop()
         motor_dir.stop()
 
+def subir_descer():
+    subirr()
+    descerr()
+    subirr()
+    descerr()
+    subirr()
+
+
+
 sala3()
+#procurar()

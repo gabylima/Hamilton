@@ -22,8 +22,8 @@ cont = 0
 
 
 # Motores
-motor_dir = LargeMotor('outB')
-motor_esq = LargeMotor('outD')
+motor_dir = LargeMotor('outD')
+motor_esq = LargeMotor('outB')
 #garra =MediumMotor('outA')
 garra = LargeMotor('outA')
 garra2 = MediumMotor('outC')

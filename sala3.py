@@ -231,17 +231,20 @@ def gfrente():
             Sound.beep()
             stop()
             sleep(0.5)
-            re()
-            re()
+            frente()
+            giroD()
+            frente()
+            giroD()
+            frente()
+            giroD()
             sleep(0.5)
-            alinha()
             break
 
 
     stop()
     Desconectar(client)
 
-def re ():
+def re():
     motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
     sleep(0.5)
@@ -253,8 +256,8 @@ def reFinal():
 
 def giroE():
 
-    motor_esq.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-500, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def frentinha():
@@ -263,8 +266,8 @@ def frentinha():
     sleep(0.5)
 
 def giroD():
-    motor_esq.run_to_rel_pos(position_sp=540, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-540, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-500, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def girop():
@@ -294,8 +297,17 @@ def procurar():
     Conectar(client)
     sleep(0.5)
 
+    re()
+    re()
+    giroD()
+    sleep(1.5)
+    giroD()
+    sleep(1.5)
+
+
+
     KP= 40
-    TP = 100
+    TP = 210.0
     KIO= 0
     KD = 0
     SP = 1
@@ -305,33 +317,50 @@ def procurar():
 
     pid = PID(KP, KIO, KD, setpoint=SP)
 
-    while True:
-        valor = carga[2]
-        control = pid(valor)
 
+    try:
 
-        if (control > VALOR_MAX_CONTROL):
-            control = VALOR_MAX_CONTROL
-        elif (control < -VALOR_MAX_CONTROL):
-            control = -VALOR_MAX_CONTROL
-
-        if (carga[2]==1 and carga[1]>=8):
-            print("despejar")
-            break
-
-
-        motor_esq.run_forever(speed_sp=TP + control)
-        motor_dir.run_forever(speed_sp=TP - control)
-
-def mprocurar():
-    while True:
-        valor = ultra1.value()
-
-        if (valor <= 50):
+        while True:
+            valor = carga[2]
+            control = pid(valor)
 
 
 
-def sala3 ():
+            if (control > VALOR_MAX_CONTROL):
+                control = VALOR_MAX_CONTROL
+            elif (control < -VALOR_MAX_CONTROL):
+                control = -VALOR_MAX_CONTROL
+
+            if (carga[2]==1 and carga[1]>=8):
+                Sound.beep()
+                stop()
+                frente()
+                sleep(1.5)
+                giroE()
+                sleep(1.5)
+                descerr()
+                sleep(1.5)
+                reTri()
+                sleep(1.5)
+                frente()
+                sleep(1.5)
+                reTri()
+                sleep(1.5)
+                frente()
+                sleep(1.5)
+                reTri()
+
+
+            motor_esq.run_forever(speed_sp=TP + control)
+            motor_dir.run_forever(speed_sp=TP - control)
+
+    except KeyboardInterrupt:
+        motor_esq.stop()
+        motor_dir.stop()
+
+
+
+def sala3():
 
     try:
 
@@ -339,7 +368,7 @@ def sala3 ():
         gfrente()
         re()
         giroE()
-        sleep(1.0)
+        sleep(1.5)
         frentinha()
         sleep(2.0)
         giroE()
@@ -392,12 +421,24 @@ def sala3 ():
         sleep(0.5)
         subir_descer()
 
+        #procurar o triângulo
+
+        procurar()
+
+
+
 
 
 
     except KeyboardInterrupt:
         motor_esq.stop()
         motor_dir.stop()
+
+def reTri():
+    motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
 
 def subir_descer():
     subirr()
@@ -407,6 +448,17 @@ def subir_descer():
     subirr()
 
 
+def reto():
+    try:
+        motor_esq.run_forever(speed_sp=TP )
+        motor_dir.run_forever(speed_sp=TP )
 
-sala3()
-#procurar()
+    except KeyboardInterrupt:
+
+        motor_dir.stop()
+        motor_esq.stop()
+
+
+#sala3()
+#reto()
+procurar()

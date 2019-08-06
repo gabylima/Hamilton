@@ -11,8 +11,6 @@ infra = InfraredSensor()
 sensor_obs.mode = 'COL-COLOR'
 infra.mode = 'IR-PROX'
 
-sensor_sala3 = ColorSensor('3')
-sensor_sala3.mode='COL-COLOR'
 
 
 
@@ -27,11 +25,10 @@ try:
 
         valor =sensor_obs.value()
         valor2 =infra.value()
-        valor3=sensor_sala3.value()
 
-        c=struct.pack('iii',valor,valor2,valor3)
+        c=struct.pack('ii',valor,valor2)
         client.publish("topic/teste",c)
-        print(struct.unpack('iii',c))
+        print(struct.unpack('ii',c))
 
         time.sleep(0.1)
 

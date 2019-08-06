@@ -101,7 +101,7 @@ def on_connect(client, userdata, flags,message):
 
 def on_message(client, userdata, message):
     global carga
-    carga = unpack('iii', message.payload)
+    carga = unpack('ii', message.payload)
 
 def EgiroObs():
     motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")

@@ -132,10 +132,9 @@ def stop():
 
 def frente():
 
-    motor_esq.run_to_rel_pos(position_sp=100, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=100, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=160, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=160, speed_sp=400, stop_action="hold")
     sleep(0.3)
-
 
 def mdescer():
     garra.run_timed(time_sp=1500, speed_sp=TPDES1)
@@ -227,7 +226,7 @@ def gfrente():
     descerr()
     for i in range(0, 30):
         frente()
-        if(carga[2] == 1 and carga[1]>=5):
+        if(carga[2] == 1 and carga[1]>=18):
             Sound.beep()
             stop()
             sleep(0.5)
@@ -280,7 +279,7 @@ def on_connect(client, userdata, flags, message):
 
 def on_message(client, userdata, message):
     global carga
-    carga = unpack('iii', message.payload)
+    carga = unpack('ii', message.payload)
 
 def Conectar(client):
     client.connect("10.42.0.183", 1883, 60)
@@ -358,8 +357,6 @@ def procurar():
         motor_esq.stop()
         motor_dir.stop()
 
-
-
 def sala3():
 
     try:
@@ -423,7 +420,7 @@ def sala3():
 
         #procurar o triângulo
 
-        procurar()
+        mprocurar()
 
 
 
@@ -439,14 +436,12 @@ def reTri():
     motor_dir.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-
 def subir_descer():
     subirr()
     descerr()
     subirr()
     descerr()
     subirr()
-
 
 def reto():
     try:
@@ -458,7 +453,114 @@ def reto():
         motor_dir.stop()
         motor_esq.stop()
 
+def vertiE():
+    motor_esq.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    sleep(0.5)
 
-#sala3()
+def vertiD():
+    motor_esq.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def mre():
+    motor_esq.run_to_rel_pos(position_sp=-700, speed_sp=1000, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-700, speed_sp=1000, stop_action="hold")
+    sleep(0.5)
+
+def mprocurar():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+    re()
+    re()
+    giroD()
+    sleep(1.5)
+    giroD()
+    sleep(1.5)
+    try:
+        while True:
+            valor = ultra1.value()
+            print(valor)
+            if(valor<= 50):
+                re()
+                re()
+                vertiE()
+                sleep(0.5)
+                stop()
+                if(carga[1]>=18 and carga[1] <= 30):
+                   frente()
+                   frente()
+                   frente()
+                   sleep(0.5)
+                   descerr()
+                   sleep(0.5)
+                   vertiE()
+                   sleep(0.5)
+                   mre()
+                   sleep(0.5)
+                   frente()
+                   sleep(0.5)
+                   mre()
+                   sleep(0.5)
+                   frente()
+                   sleep(0.5)
+                   mre()
+                   sleep(0.5)
+                   frente()
+                   stop()
+                   break
+                else:
+                    vertiD()
+                    sleep(0.5)
+                    if(valor <= 50 and carga[1] <= 20):
+                        stop()
+                        re()
+                        giroE()
+                        sleep(1.5)
+                        stop()
+                    elif(valor <= 50 and carga[1]>=40):
+                        stop()
+                        re()
+                        giroE()
+                        sleep(1.5)
+                        stop()
+
+            motor_dir.run_forever(speed_sp=TP)
+            motor_esq.run_forever(speed_sp=TP)
+    except KeyboardInterrupt:
+            stop()
+
+def msala3():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+    for j in range(0,4):
+        if(j % 2 == 0):
+            for i in range(0,20):
+               frente()
+               if(carga[1]>= 18 and carga[2]==1):
+                   Sound.beep()
+
+            stop()
+            giroE()
+            sleep(1.5)
+            frente()
+            sleep(1.5)
+            giroE()
+            sleep(1.5)
+            stop()
+        else:
+            for i in range(0,20):
+              frente()
+            stop()
+            giroD()
+            sleep(1.5)
+            frente()
+            sleep(1.5)
+            giroD()
+            sleep(1.5)
+            stop()
+sala3()
 #reto()
-procurar()
+#mprocurar()

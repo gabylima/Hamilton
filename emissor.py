@@ -7,8 +7,13 @@ import paho.mqtt.client as mqtt
 import struct
 
 sensor_obs = ColorSensor('in1')
+
 infra = InfraredSensor()
+
+sensor_cor = ColorSensor('in3')
+
 sensor_obs.mode = 'COL-COLOR'
+
 infra.mode = 'IR-PROX'
 
 
@@ -25,10 +30,10 @@ try:
 
         valor =sensor_obs.value()
         valor2 =infra.value()
-
-        c=struct.pack('ii',valor,valor2)
+        valor3 = sensor_cor.value()
+        c=struct.pack('iii',valor,valor2,valor3)
         client.publish("topic/teste",c)
-        print(struct.unpack('ii',c))
+        print(struct.unpack('iii',c))
 
         time.sleep(0.1)
 

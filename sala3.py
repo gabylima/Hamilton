@@ -223,10 +223,11 @@ def alinha():
 def gfrente():
     client = mqtt.Client()
     Conectar(client)
+    sleep(0.5)
     descerr()
     for i in range(0, 30):
         frente()
-        if(carga[2] == 1 and carga[1]>=18):
+        if(carga[1]>=18):
             Sound.beep()
             stop()
             sleep(0.5)
@@ -279,7 +280,7 @@ def on_connect(client, userdata, flags, message):
 
 def on_message(client, userdata, message):
     global carga
-    carga = unpack('ii', message.payload)
+    carga = unpack('iii', message.payload)
 
 def Conectar(client):
     client.connect("10.42.0.183", 1883, 60)
@@ -482,13 +483,13 @@ def mprocurar():
         while True:
             valor = ultra1.value()
             print(valor)
-            if(valor<= 50):
+            if(valor<= 80):
                 re()
                 re()
                 vertiE()
                 sleep(0.5)
                 stop()
-                if(carga[1]>=18 and carga[1] <= 30):
+                if(carga[1]>=18 ):
                    frente()
                    frente()
                    frente()
@@ -513,13 +514,13 @@ def mprocurar():
                 else:
                     vertiD()
                     sleep(0.5)
-                    if(valor <= 50 and carga[1] <= 20):
+                    if(valor <= 80 and carga[1] <= 20):
                         stop()
                         re()
                         giroE()
                         sleep(1.5)
                         stop()
-                    elif(valor <= 50 and carga[1]>=40):
+                    elif(valor <= 80 and carga[1]>=40):
                         stop()
                         re()
                         giroE()
@@ -531,36 +532,6 @@ def mprocurar():
     except KeyboardInterrupt:
             stop()
 
-def msala3():
-    client = mqtt.Client()
-    Conectar(client)
-    sleep(0.5)
-    for j in range(0,4):
-        if(j % 2 == 0):
-            for i in range(0,20):
-               frente()
-               if(carga[1]>= 18 and carga[2]==1):
-                   Sound.beep()
-
-            stop()
-            giroE()
-            sleep(1.5)
-            frente()
-            sleep(1.5)
-            giroE()
-            sleep(1.5)
-            stop()
-        else:
-            for i in range(0,20):
-              frente()
-            stop()
-            giroD()
-            sleep(1.5)
-            frente()
-            sleep(1.5)
-            giroD()
-            sleep(1.5)
-            stop()
 sala3()
 #reto()
 #mprocurar()

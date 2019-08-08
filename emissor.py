@@ -14,6 +14,8 @@ sensor_cor = ColorSensor('in3')
 
 sensor_obs.mode = 'COL-COLOR'
 
+sensor_cor.mode = 'COL-COLOR'
+
 infra.mode = 'IR-PROX'
 
 

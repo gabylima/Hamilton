@@ -206,9 +206,69 @@ def descerr():
     sleep(0.9)
 
 def frentee():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+
+    descerr()
+
+    KP = 12
+    TP = 210.0
+    KIO = 0
+    KD = 0
+    SP = 3
+
+    V_MAX_MOTOR = 1000
+    VALOR_MAX_CONTROL = V_MAX_MOTOR - TP
     for i in range(0, 30):
         frente()
+
+        pid = PID(KP, KIO, KD, setpoint=SP)
+
+        control = pid(carga[1])
+
+        if (control > VALOR_MAX_CONTROL):
+            control = VALOR_MAX_CONTROL
+        elif (control < -VALOR_MAX_CONTROL):
+            control = -VALOR_MAX_CONTROL
+
+        motor_esq.run_forever(speed_sp=TP - control)
+        motor_dir.run_forever(speed_sp=TP + control)
+
+        if (carga[1] >= 18):
+            Sound.beep()
+            stop()
+
+            frente()
+            frente()
+            frente()
+            sleep(0.5)
+            descerr()
+            sleep(0.5)
+            vertiE()
+            sleep(0.5)
+            mre()
+            sleep(0.5)
+            frente()
+            sleep(0.5)
+            mre()
+            sleep(0.5)
+            frente()
+            sleep(0.5)
+            mre()
+            sleep(0.5)
+            frente()
+            stop()
+
+
+
+
+
+
+
     stop()
+    Desconectar(client)
+
 
 def frenteTri():
     motor_esq.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
@@ -350,6 +410,7 @@ def procurar():
                 sleep(1.5)
                 reTri()
 
+            frentee()
 
             motor_esq.run_forever(speed_sp=TP + control)
             motor_dir.run_forever(speed_sp=TP - control)
@@ -358,12 +419,263 @@ def procurar():
         motor_esq.stop()
         motor_dir.stop()
 
+def giroDTri():
+    motor_esq.run_to_rel_pos(position_sp=-400, speed_sp=200, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=400, speed_sp=200, stop_action="hold")
+    sleep(0.5)
+
+
+def voltar():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+
+    for i in range(0,25):
+        frente()
+
+        if (carga[1] >= 18 and carga[2] == 1):
+
+            Sound.beep()
+            stop()
+
+            # Código para posicionar e derrubar as bolinhas no triângulo
+
+            frente()
+            frente()
+            frente()
+            sleep(0.5)
+            descerr()
+            sleep(0.5)
+            vertiE()
+            sleep(0.5)
+            mre()
+            sleep(0.5)
+            frente()
+            sleep(0.5)
+            mre()
+            sleep(0.5)
+            frente()
+            sleep(0.5)
+            mre()
+            sleep(0.5)
+            frente()
+            stop()
+
+            # código para retornar para a parede ou ir para o centro espalhar bolinhas:
+
+            giroD()
+            giroD()
+
+
+        # Parando a conexão
+    stop()
+    Desconectar(client)
+
+
+
+def frenteManual():
+
+    #criando o client para se comunicar com o briak
+
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+
+    while True:
+
+        for i in range (0,30):
+            frente()
+
+            #se em algum momento ele ver o triângulo, ele deposita a bolinha e depois retorna para a parede
+
+            if (carga[1] >= 18 and carga[2]==1):
+
+                Sound.beep()
+                stop()
+
+
+                #Código para posicionar e derrubar as bolinhas no triângulo
+
+                frente()
+                frente()
+                frente()
+                sleep(0.5)
+                descerr()
+                sleep(0.5)
+                vertiE()
+                sleep(0.5)
+
+                #parte que adicionei
+                subirr()
+                sleep(0.5)
+                descerr()
+                sleep(0.5)
+
+
+                mre()
+                sleep(0.5)
+                frente()
+                sleep(0.5)
+                mre()
+                sleep(0.5)
+                frente()
+                sleep(0.5)
+                mre()
+                sleep(0.5)
+                frente()
+                stop()
+
+                #código para retornar para a parede ou ir para o centro espalhar bolinhas:
+
+                giroD()
+                giroD()
+
+                for i in range (0, 15):
+                    frente()
+
+        #poderia ter uma consição para caso ele visse o triângulo, quebrar o for e ele andar menos
+
+        re()
+        giroE()
+        sleep(1.5)
+
+
+
+
+
+
+
+
+
+    #Parando a conexão
+    stop()
+    Desconectar(client)
+
+
+def sala3PID():
+
+    descerr()
+
+    while True:
+
+        frentee()
+        re()
+        giroE()
+        sleep(1.5)
+
+
+def sala3Manual():
+
+    descerr()
+
+    while True:
+
+        frenteManual()
+
+def frentemenorrr():
+    motor_esq.run_to_rel_pos(position_sp=60, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=60, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def frenteManual2():
+
+
+    #criando o client para se comunicar com o brick
+
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+
+    while True:
+
+        for i in range (0,30):
+            frente()
+
+            #se em algum momento ele ver o triângulo, ele deposita a bolinha e depois retorna para a parede
+
+            if (carga[1] >= 18 and carga[2]==1):
+
+                Sound.beep()
+                stop()
+
+
+                #Código para posicionar e derrubar as bolinhas no triângulo
+
+                frente()
+                frente()
+                frente()
+                sleep(0.5)
+                descerr()
+                sleep(0.5)
+                vertiE()
+                sleep(0.5)
+
+                #parte que adicionei
+                subirr()
+                sleep(0.5)
+                descerr()
+                sleep(0.5)
+
+
+                mre()
+                sleep(0.5)
+                frente()
+                sleep(0.5)
+                mre()
+                sleep(0.5)
+                frente()
+                sleep(0.5)
+                mre()
+                sleep(0.5)
+                frente()
+                stop()
+
+                #código para retornar para a parede ou ir para o centro espalhar bolinhas:
+
+                giroD()
+                giroD()
+
+                for i in range (0, 15):
+                    frente()
+
+        #poderia ter uma consição para caso ele visse o triângulo, quebrar o for e ele andar menos
+
+        re()
+        sleep(0.5)
+        re()
+        sleep(0.5)
+        subirr()
+        sleep(0.5)
+        descerr()
+        sleep(0.5)
+        #se não der certo, acrescentar um frente equivalente ao ré
+        frentemenorrr()
+        sleep(0.5)
+        giroE()
+        sleep(1.5)
+
+
+    #Parando a conexão
+    stop()
+    Desconectar(client)
+
+
+
+
+def sala3Manual2():
+    descerr()
+
+    while True:
+        frenteManual2()
+
+
 def sala3():
 
     try:
 
         #1º etapa
         gfrente()
+        frentee()
         re()
         giroE()
         sleep(1.5)
@@ -431,6 +743,100 @@ def sala3():
     except KeyboardInterrupt:
         motor_esq.stop()
         motor_dir.stop()
+
+
+def ggfrente():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+    descerr()
+    for i in range(0, 30):
+        frente()
+        if (carga[1] >= 10 and carga[1]<=40):
+            Sound.beep()
+            stop()
+            sleep(0.5)
+            frente()
+            giroE()
+            sleep((0.5))
+            giroE()
+            break
+
+    stop()
+    Desconectar(client)
+
+
+
+def sala3ofi():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+    descerr()
+
+    gfrente()
+    re()
+    giroE()
+    sleep(1.5)
+    frentinha()
+    sleep(2.0)
+    giroE()
+    sleep(1.5)
+
+    # 2ºetapa, depois que girar totalmente
+
+    frentee()
+    sleep(1.5)
+    re()
+    re()
+    giroD()
+    sleep(1.5)
+    frentinha()
+    sleep(2.0)
+    giroD()
+    sleep(1.5)
+
+    # 3º etapa, depois de girar totalmente
+
+    frentee()
+    re()
+    re()
+    giroE()
+    sleep(1.5)
+    frentinha()
+    sleep(2.0)
+    giroE()
+    sleep(1.5)
+
+    # 4º etapa, depois de girar totalmente
+
+    ggfrente()
+    re()
+    re()
+    giroD()
+    sleep(1.5)
+    frentinha()
+    sleep(2.0)
+    giroD()
+    sleep(1.5)
+
+    # 5º etapa, depois de girar totalmente
+    frentee()
+
+    # if(ultra2.value()>)
+
+    # etapa final
+    reFinal()
+    sleep(0.5)
+    subir_descer()
+
+    # procurar o triângulo
+
+    mprocurar()
+
+
+
+
+
 
 def reTri():
     motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
@@ -510,6 +916,7 @@ def mprocurar():
                    sleep(0.5)
                    frente()
                    stop()
+
                    break
                 else:
                     vertiD()
@@ -532,6 +939,8 @@ def mprocurar():
     except KeyboardInterrupt:
             stop()
 
-sala3()
+sala3Manual2() #dando certo, porém não tão reto e falta a parte do centro
+
+#sala3ofi()
 #reto()
 #mprocurar()

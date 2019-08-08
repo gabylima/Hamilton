@@ -577,6 +577,40 @@ def frentemenorrr():
     motor_dir.run_to_rel_pos(position_sp=60, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
+def reMaior():
+
+    motor_esq.run_to_rel_pos(position_sp=-160, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-160, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
+
+def centro():
+
+    for i in range (0,5):
+        frente()
+        sleep(1.0)
+        frente()
+        sleep(1.0)
+        giroD()
+        sleep(1.0)
+        giroE()
+        sleep(1.0)
+        giroE()
+        sleep(1.0)
+        giroD()
+        sleep(1.0)
+        Sound.beep()
+
+    #retornando para a parede ou triÂngulo
+
+    for i in range(0,15):
+        reMaior()
+
+    frente()
+
+    #girando para encontrar a parede ou triÂngulo
+
 def frenteManual2():
 
 
@@ -630,7 +664,11 @@ def frenteManual2():
                 frente()
                 stop()
 
-                #código para retornar para a parede ou ir para o centro espalhar bolinhas:
+                #código para ir até o centro e voltar
+
+                centro()
+
+                #código para retornar para a parede
 
                 giroD()
                 giroD()
@@ -939,7 +977,9 @@ def mprocurar():
     except KeyboardInterrupt:
             stop()
 
-sala3Manual2() #dando certo, porém não tão reto e falta a parte do centro
+sala3Manual2() #dando certo toda a varredura lateral
+
+#centro()
 
 #sala3ofi()
 #reto()

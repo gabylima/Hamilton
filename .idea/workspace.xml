@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3e35326-d1b7-4288-b750-7bbb0e88e604" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/emissor.py" beforeDir="false" afterPath="$PROJECT_DIR$/emissor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sala3.py" beforeDir="false" afterPath="$PROJECT_DIR$/sala3.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sala3.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="532" column="25" lean-forward="true" selection-end-line="850" />
+            <state relative-caret-position="240">
+              <caret line="582" column="43" selection-start-line="582" selection-start-column="43" selection-end-line="582" selection-end-column="43" />
               <folding>
                 <element signature="e#24#48#0" expanded="true" />
                 <element signature="e#691#752#0" />
@@ -38,10 +36,10 @@
                 <element signature="e#4096#4652#0" />
                 <element signature="e#4673#5164#0" />
                 <element signature="e#5239#5301#0" />
+                <element signature="e#5322#6463#0" />
                 <element signature="e#6487#6657#0" />
                 <element signature="e#6677#6848#0" />
                 <element signature="e#6869#7279#0" />
-                <element signature="e#7295#7465#0" />
                 <element signature="e#7486#7658#0" />
                 <element signature="e#7678#7849#0" />
                 <element signature="e#7872#8042#0" />
@@ -54,7 +52,10 @@
                 <element signature="e#8869#10153#0" />
                 <element signature="e#10183#10354#0" />
                 <element signature="e#10375#11123#0" />
+                <element signature="e#11160#12588#0" />
                 <element signature="e#10177#10270#0" />
+                <element signature="e#10298#10329#0" />
+                <element signature="e#13066#13236#0" />
                 <element signature="e#10292#11410#0" />
                 <element signature="e#11433#11802#0" />
                 <element signature="e#11826#12706#0" />
@@ -62,6 +63,7 @@
                 <element signature="e#12922#12984#0" />
                 <element signature="e#13002#13176#0" />
                 <element signature="e#13196#13367#0" />
+                <element signature="e#13387#13558#0" />
                 <element signature="e#13575#13749#0" />
                 <element signature="e#13772#15417#0" />
               </folding>
@@ -214,12 +216,12 @@
       <workItem from="1564779385152" duration="790000" />
       <workItem from="1565119405570" duration="3575000" />
       <workItem from="1565193119316" duration="14432000" />
-      <workItem from="1565282000270" duration="5762000" />
+      <workItem from="1565282000270" duration="12255000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="335094000" />
+    <option name="totallyTimeSpent" value="341587000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -413,8 +415,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sala3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="532" column="25" lean-forward="true" selection-end-line="850" />
+        <state relative-caret-position="240">
+          <caret line="582" column="43" selection-start-line="582" selection-start-column="43" selection-end-line="582" selection-end-column="43" />
           <folding>
             <element signature="e#24#48#0" expanded="true" />
             <element signature="e#691#752#0" />
@@ -431,10 +433,10 @@
             <element signature="e#4096#4652#0" />
             <element signature="e#4673#5164#0" />
             <element signature="e#5239#5301#0" />
+            <element signature="e#5322#6463#0" />
             <element signature="e#6487#6657#0" />
             <element signature="e#6677#6848#0" />
             <element signature="e#6869#7279#0" />
-            <element signature="e#7295#7465#0" />
             <element signature="e#7486#7658#0" />
             <element signature="e#7678#7849#0" />
             <element signature="e#7872#8042#0" />
@@ -447,7 +449,10 @@
             <element signature="e#8869#10153#0" />
             <element signature="e#10183#10354#0" />
             <element signature="e#10375#11123#0" />
+            <element signature="e#11160#12588#0" />
             <element signature="e#10177#10270#0" />
+            <element signature="e#10298#10329#0" />
+            <element signature="e#13066#13236#0" />
             <element signature="e#10292#11410#0" />
             <element signature="e#11433#11802#0" />
             <element signature="e#11826#12706#0" />
@@ -455,6 +460,7 @@
             <element signature="e#12922#12984#0" />
             <element signature="e#13002#13176#0" />
             <element signature="e#13196#13367#0" />
+            <element signature="e#13387#13558#0" />
             <element signature="e#13575#13749#0" />
             <element signature="e#13772#15417#0" />
           </folding>

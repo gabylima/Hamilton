@@ -9,10 +9,10 @@ import  struct
 from csv import *
 
 #system('setfont Lat15-TerminusBold14') # estilização
-KP = 11 #modifiquei o kp: tava 12
+KP = 18#modifiquei o kp: tava 12
 KI = 0
 KD = 0
-TP = 220.0 #modifiquei tp: tava 280
+TP = 200.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 0
 carga =" "
@@ -87,7 +87,6 @@ def sala3():
         motor_esq.stop()
 
 def VerificaSala3(c):
-    print(carga[1])
     if (ultra2.value() >= 300 and carga[1] <= 4 and c >= 9):
         return 1
     elif ((ultra2.value() >= 30 and ultra2.value() <= 78) and carga[1] >= 70 and c >= 9):
@@ -101,7 +100,7 @@ def on_connect(client, userdata, flags,message):
 
 def on_message(client, userdata, message):
     global carga
-    carga = unpack('ii', message.payload)
+    carga = unpack('iii', message.payload)
 
 def EgiroObs():
     motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
@@ -366,7 +365,8 @@ def verde2(SP):
     sensor_esq.mode = 'COL-REFLECT'
     sensor_dir.mode = 'COL-REFLECT'
 
-def calibragem(button2):
+def calibragemSP(button2):
+    print("<<< BRANCO >>>")
     print('posicione os sensores de cor na superficie branca e aperte um botao')
     try:
         while True:
@@ -377,6 +377,8 @@ def calibragem(button2):
                    return esq - di
             else:
                 sleep(0.01)
+
+
 
     except KeyboardInterrupt:
         motor_dir.stop()
@@ -409,12 +411,9 @@ def executar(TP, SP):
     try:
         while True:
             Restart()
-            print('sensores:', carga)
             if((ultra2.value()>=36 and ultra2.value()<=80)and(carga[1]<=2)):
                 global cont
                 cont=cont+1
-            print("cont:",cont)
-            print("sensor:",carga[1])
             s3 = VerificaSala3(cont)
         # parte do obstaculo
             if ultra1.value() <= 50:
@@ -465,6 +464,30 @@ def executar(TP, SP):
             arq.write(str(i)+',\n')
         arq.close()
 
+def calibragemVerde(button3):
+    print("<<< VERDE >>>")
+    print('Posicione os sensores de cor na superficie branca e aperte um botao: ')
+    try:
+        while True:
+            if button3.enter:
+
+                di = sensor_dir.value()
+                esq = sensor_esq.value()
+
+                listaVerde=[]
+                listaVerde.append(esq)
+                listaVerde.append(di)
+
+                return listaVerde
+            else:
+                sleep(0.01)
+
+
+
+    except KeyboardInterrupt:
+        motor_dir.stop()
+        motor_esq.stop()
+
 def menu():
     # Faz a conexão entre o usuario e robô onde ele pode escolher entre
     # calibrar(botão Direito) os valores da pista e rodar(botão Esquerdo) o programa
@@ -478,10 +501,15 @@ def menu():
 
         if button2.left:
             system("clear")
-            SP = calibragem(button2)
+            SP = calibragemSP(button2)
             print('SP atualizado:',SP)
             sleep(0.01)
+            system("clear")
+           # verdeCali=calibragemVerde(button2)
+            #print("Verde Atualizado!", verdeCali)
+            sleep(0.01)
             print("<< Calibrar | Iniciar >>")
+
 
         elif button2.right:
             system("clear")

@@ -269,7 +269,6 @@ def frentee():
     stop()
     Desconectar(client)
 
-
 def frenteTri():
     motor_esq.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
@@ -583,15 +582,33 @@ def reMaior():
     motor_dir.run_to_rel_pos(position_sp=-160, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
+def mcentro():
+    for i in range (0,5):
+        frente()
+        sleep(0.5)
+        frente()
+        sleep(0.5)
+        giroD()
+        sleep(1.0)
+        giroE()
+        sleep(1.0)
+        giroE()
+        sleep(1.0)
+        giroD()
+        sleep(1.0)
+        Sound.beep()
+    for i in range(0,15):
+        reMaior()
 
+    frente()
 
 def centro():
 
     for i in range (0,5):
         frente()
-        sleep(1.0)
+        sleep(0.5)
         frente()
-        sleep(1.0)
+        sleep(0.5)
         giroD()
         sleep(1.0)
         giroE()
@@ -611,6 +628,9 @@ def centro():
 
     #girando para encontrar a parede ou triÂngulo
 
+
+
+
 def frenteManual2():
 
 
@@ -619,15 +639,15 @@ def frenteManual2():
     client = mqtt.Client()
     Conectar(client)
     sleep(0.5)
-
+    cont =0
     while True:
-
         for i in range (0,30):
             frente()
 
             #se em algum momento ele ver o triângulo, ele deposita a bolinha e depois retorna para a parede
 
             if (carga[1] >= 18 and carga[2]==1):
+                cont = cont +1
 
                 Sound.beep()
                 stop()
@@ -635,8 +655,6 @@ def frenteManual2():
 
                 #Código para posicionar e derrubar as bolinhas no triângulo
 
-                frente()
-                frente()
                 frente()
                 sleep(0.5)
                 descerr()
@@ -665,8 +683,9 @@ def frenteManual2():
                 stop()
 
                 #código para ir até o centro e voltar
-
-                centro()
+                if (cont == 2):
+                    mcentro()
+                    cont =0
 
                 #código para retornar para a parede
 
@@ -697,15 +716,11 @@ def frenteManual2():
     stop()
     Desconectar(client)
 
-
-
-
 def sala3Manual2():
     descerr()
 
     while True:
         frenteManual2()
-
 
 def sala3():
 
@@ -782,7 +797,6 @@ def sala3():
         motor_esq.stop()
         motor_dir.stop()
 
-
 def ggfrente():
     client = mqtt.Client()
     Conectar(client)
@@ -802,8 +816,6 @@ def ggfrente():
 
     stop()
     Desconectar(client)
-
-
 
 def sala3ofi():
     client = mqtt.Client()
@@ -870,11 +882,6 @@ def sala3ofi():
     # procurar o triângulo
 
     mprocurar()
-
-
-
-
-
 
 def reTri():
     motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3e35326-d1b7-4288-b750-7bbb0e88e604" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sala3oficial.py" beforeDir="false" afterPath="$PROJECT_DIR$/sala3oficial.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sala3oficial.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="128">
-              <caret line="303" column="5" selection-start-line="303" selection-start-column="5" selection-end-line="303" selection-end-column="5" />
+            <state relative-caret-position="250">
+              <caret line="836" column="30" selection-start-line="836" selection-start-column="30" selection-end-line="836" selection-end-column="30" />
               <folding>
                 <element signature="e#24#48#0" expanded="true" />
                 <element signature="e#610#671#0" />
@@ -43,6 +42,16 @@
                 <element signature="e#6293#6343#0" />
                 <element signature="e#6363#6534#0" />
                 <element signature="e#6551#6725#0" />
+                <element signature="e#6751#6921#0" />
+                <element signature="e#6948#8249#0" />
+                <element signature="e#8282#9660#0" />
+                <element signature="e#9644#9818#0" />
+                <element signature="e#9692#11774#0" />
+                <element signature="e#11805#12208#0" />
+                <element signature="e#14203#16302#0" />
+                <element signature="e#16331#16439#0" />
+                <element signature="e#16470#16525#0" />
+                <element signature="e#16560#16619#0" />
               </folding>
             </state>
           </provider>
@@ -216,12 +225,12 @@
       <workItem from="1565636053184" duration="4605000" />
       <workItem from="1565796852980" duration="17192000" />
       <workItem from="1565875564468" duration="94000" />
-      <workItem from="1565891645275" duration="1271000" />
+      <workItem from="1565891645275" duration="3975000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="382643000" />
+    <option name="totallyTimeSpent" value="385347000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -490,8 +499,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sala3oficial.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="303" column="5" selection-start-line="303" selection-start-column="5" selection-end-line="303" selection-end-column="5" />
+        <state relative-caret-position="250">
+          <caret line="836" column="30" selection-start-line="836" selection-start-column="30" selection-end-line="836" selection-end-column="30" />
           <folding>
             <element signature="e#24#48#0" expanded="true" />
             <element signature="e#610#671#0" />
@@ -514,6 +523,16 @@
             <element signature="e#6293#6343#0" />
             <element signature="e#6363#6534#0" />
             <element signature="e#6551#6725#0" />
+            <element signature="e#6751#6921#0" />
+            <element signature="e#6948#8249#0" />
+            <element signature="e#8282#9660#0" />
+            <element signature="e#9644#9818#0" />
+            <element signature="e#9692#11774#0" />
+            <element signature="e#11805#12208#0" />
+            <element signature="e#14203#16302#0" />
+            <element signature="e#16331#16439#0" />
+            <element signature="e#16470#16525#0" />
+            <element signature="e#16560#16619#0" />
           </folding>
         </state>
       </provider>

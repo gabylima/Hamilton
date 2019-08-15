@@ -303,7 +303,6 @@ def frenteRapido():
     motor_dir.run_to_rel_pos(position_sp=160, speed_sp=1000)
     sleep(0.3)
 
-
 def coletaCentro():
     for i in range (0,15):
         frente()
@@ -505,7 +504,10 @@ def coletaCentroRapido():
     giroD()
     sleep(1.5)
 
-
+def mrefinal():
+    motor_esq.run_to_rel_pos(position_sp=-800, speed_sp=1000, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-800, speed_sp=1000, stop_action="hold")
+    sleep(0.5)
 
 def frenteManualMeio():
     #criando o client para se comunicar com o brick
@@ -676,7 +678,7 @@ def frenteManualBorda():
                 sleep(0.5)
                 frente()
                 sleep(0.5)
-                mre()
+                mreFinal()
                 sleep(0.5)
                 frente()
                 stop()
@@ -744,6 +746,8 @@ def frenteManualMeioRapido():
 
                 # Código para posicionar e derrubar as bolinhas no triângulo
 
+                frenteRapido()
+                sleep(0.5)
                 frenteRapido()
                 sleep(0.5)
                 descerr()

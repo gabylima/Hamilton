@@ -299,8 +299,8 @@ def mre():
     sleep(0.5)
 
 def frenteRapido():
-    motor_esq.run_to_rel_pos(position_sp=160, speed_sp=600, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=160, speed_sp=600, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=160, speed_sp=1000)
+    motor_dir.run_to_rel_pos(position_sp=160, speed_sp=1000)
     sleep(0.3)
 
 
@@ -419,7 +419,7 @@ def coletaCentroRapido():
     giroE()
     sleep(1.5)
 
-    for i in range (0,20):
+    for i in range (0,15):
         frenteRapido()
 
     sleep(1.5)
@@ -441,7 +441,7 @@ def coletaCentroRapido():
     sleep(1.5)
 
 
-    for i in range (0,20):
+    for i in range (0,15):
         frenteRapido()
 
     sleep(1.5)
@@ -462,7 +462,7 @@ def coletaCentroRapido():
     giroE()
     sleep(1.5)
 
-    for i in range(0, 10):
+    for i in range(0, 12):
         frente()
 
     sleep(1.5)
@@ -483,7 +483,7 @@ def coletaCentroRapido():
     giroD()
     sleep(1.5)
 
-    for i in range(0, 7):
+    for i in range(0, 8):
         frenteRapido()
 
     sleep(1.5)
@@ -820,7 +820,6 @@ def sala3ManualBorda():
     while True:
 
         frenteManualBorda()
-
 
 def sala3ManualMeioRapido():
     descerr()

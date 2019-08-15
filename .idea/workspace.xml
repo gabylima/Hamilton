@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e3e35326-d1b7-4288-b750-7bbb0e88e604" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PIDCurvaDiferenciada.py" beforeDir="false" afterPath="$PROJECT_DIR$/PIDCurvaDiferenciada.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sala3.py" beforeDir="false" afterPath="$PROJECT_DIR$/sala3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sala3oficial.py" beforeDir="false" afterPath="$PROJECT_DIR$/sala3oficial.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,12 +15,12 @@
     <favorites_list name="Hamilton" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sala3oficial.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="590" column="15" lean-forward="true" selection-start-line="590" selection-start-column="15" selection-end-line="590" selection-end-column="15" />
+            <state relative-caret-position="128">
+              <caret line="303" column="5" selection-start-line="303" selection-start-column="5" selection-end-line="303" selection-end-column="5" />
               <folding>
                 <element signature="e#24#48#0" expanded="true" />
                 <element signature="e#610#671#0" />
@@ -44,11 +43,6 @@
                 <element signature="e#6293#6343#0" />
                 <element signature="e#6363#6534#0" />
                 <element signature="e#6551#6725#0" />
-                <element signature="e#6751#8052#0" />
-                <element signature="e#6845#8830#0" />
-                <element signature="e#10199#12257#0" />
-                <element signature="e#8857#8907#0" />
-                <element signature="e#10342#10408#0" />
               </folding>
             </state>
           </provider>
@@ -89,9 +83,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="24" />
-    <option name="width" value="689" />
-    <option name="height" value="769" />
+    <option name="x" value="-3" />
+    <option name="width" value="1372" />
+    <option name="height" value="738" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -220,12 +214,14 @@
       <workItem from="1565360626697" duration="16456000" />
       <workItem from="1565633095994" duration="51000" />
       <workItem from="1565636053184" duration="4605000" />
-      <workItem from="1565796852980" duration="12664000" />
+      <workItem from="1565796852980" duration="17192000" />
+      <workItem from="1565875564468" duration="94000" />
+      <workItem from="1565891645275" duration="1271000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="376750000" />
+    <option name="totallyTimeSpent" value="382643000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -240,7 +236,7 @@
     <frame x="-3" y="0" width="1372" height="738" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3280303" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.33863637" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -255,14 +251,14 @@
       <window_info anchor="bottom" id="File Transfer" order="9" weight="0.32520324" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="12" visible="true" weight="0.25691056" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="12" visible="true" weight="0.29268292" />
       <window_info anchor="bottom" id="Python Console" order="13" weight="0.3284553" />
-      <window_info anchor="right" id="Coverage" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info anchor="right" id="Database" order="4" />
+      <window_info anchor="right" id="Coverage" order="5" side_tool="true" />
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.09772728" />
@@ -494,8 +490,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sala3oficial.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="590" column="15" lean-forward="true" selection-start-line="590" selection-start-column="15" selection-end-line="590" selection-end-column="15" />
+        <state relative-caret-position="128">
+          <caret line="303" column="5" selection-start-line="303" selection-start-column="5" selection-end-line="303" selection-end-column="5" />
           <folding>
             <element signature="e#24#48#0" expanded="true" />
             <element signature="e#610#671#0" />
@@ -518,11 +514,6 @@
             <element signature="e#6293#6343#0" />
             <element signature="e#6363#6534#0" />
             <element signature="e#6551#6725#0" />
-            <element signature="e#6751#8052#0" />
-            <element signature="e#6845#8830#0" />
-            <element signature="e#10199#12257#0" />
-            <element signature="e#8857#8907#0" />
-            <element signature="e#10342#10408#0" />
           </folding>
         </state>
       </provider>

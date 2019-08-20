@@ -51,6 +51,16 @@ def descerr():
     garra2.run_timed(time_sp=1500, speed_sp=-TPDES)
     sleep(0.9)
 
+def vertiE():
+    motor_esq.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def vertiD():
+    motor_esq.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
 def re():
     motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
     motor_dir.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
@@ -678,7 +688,7 @@ def frenteManualBorda():
                 sleep(0.5)
                 frente()
                 sleep(0.5)
-                mreFinal()
+                mrefinal()
                 sleep(0.5)
                 frente()
                 stop()

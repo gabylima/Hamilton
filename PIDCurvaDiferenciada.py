@@ -12,14 +12,14 @@ from csv import *
 KP = 18#modifiquei o kp: tava 12
 KI = 0
 KD = 0
-TP = 200.0 #modifiquei tp: tava 280
+TP = 210.0 #modifiquei tp: tava 280
 VALOR_MAX_CONTROL = 1000 - TP
 CORRECAO_MOTOR = 0
 carga =" "
 TPDES=900
 TPDES1=100
 cont = 0
-
+sensor_cor=0
 
 # Motores
 motor_dir = LargeMotor('outD')
@@ -100,7 +100,7 @@ def on_connect(client, userdata, flags,message):
 
 def on_message(client, userdata, message):
     global carga
-    carga = unpack('iii', message.payload)
+    carga = unpack('iiii', message.payload)
 
 def EgiroObs():
     motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
@@ -122,11 +122,11 @@ def DgiroObs():
 
 def PosObstaculo():
     stop()
-    EgiroObs()
-    stop()
     mfrente()
     mfrente()
     DgiroObs()
+    mtras()
+    mtras()
     stop()
 
 def Conectar(client):
@@ -169,8 +169,8 @@ def DgiroVerde():
 def mtras():
     #volta um pouco para tras
 
-    motor_dir.run_to_rel_pos(position_sp=-75, speed_sp=400, stop_action="hold")
-    motor_esq.run_to_rel_pos(position_sp=-75, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-100, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
 
 def obstaculo():
@@ -292,7 +292,7 @@ def twoverde():
     motor_esq.run_to_rel_pos(position_sp=-450, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-def verde2(SP):
+def IdentificaVerde():
 
     sensor_esq.mode = 'COL-COLOR'
     sensor_dir.mode = 'COL-COLOR'
@@ -300,45 +300,14 @@ def verde2(SP):
     verdeE = sensor_esq.value()
     verdeD = sensor_dir.value()
 
-    if(verdeE==3 and verdeD==3):
+    if(verdeE==sensor_cor['esquerdo'] and verdeD==sensor_cor['direito']):
     #se ele ver dois verdes
         twoverde()
 
-    elif (verdeE == 3 or verdeD==3):
+    elif (verdeE == sensor_cor['esquerdo'] or verdeD==sensor_cor['direito']):
     #se ele ver algum verde de ambos os lados
-        sensor_esq.mode = 'COL-REFLECT'
-        sensor_dir.mode = 'COL-REFLECT'
-        stop()
-        Sound.beep()
         mtras()
         stop()
-        KPO = 11
-        TPO = 0
-        KIO = 0
-        KDO = 0
-        SPO = SP
-        V_MAX_MOTOR = 1000
-        VALOR_MAX_CONTROL = V_MAX_MOTOR - TPO
-
-        pid = PID(KPO, KIO, KDO, setpoint=SPO)
-        dif = sensor_esq.value() - sensor_dir.value()
-        control = pid(dif)
-
-        if (control > VALOR_MAX_CONTROL):
-            control = VALOR_MAX_CONTROL
-        elif (control < -VALOR_MAX_CONTROL):
-            control = -VALOR_MAX_CONTROL
-
-        motor_esq.run_forever(speed_sp=TPO - control)
-        motor_dir.run_forever(speed_sp=TPO + control)
-
-
-        sensor_esq.mode = 'COL-COLOR'
-        sensor_dir.mode = 'COL-COLOR'
-
-        verdeE = sensor_esq.value()
-        verdeD = sensor_dir.value()
-
         if(verdeD== 1 and verdeE ==1):
             #caso ele recue e veja preto nos dois sensores, ignore-os
             mfrente()
@@ -347,16 +316,16 @@ def verde2(SP):
         elif(verdeD == 6 and verdeE == 1):
             mfrente()
         elif (verdeD== 6 and verdeE ==6):
-            #caso ele recue veja branco nos dois sensores, ele avançará pra frente
+            #caso ele recue e veja branco nos dois sensores, ele avançará pra frente
             mfrentemenor()
             verdeEs = sensor_esq.value()
             verdeDi = sensor_dir.value()
             stop()
-            if (verdeDi == 3 and verdeEs == 6):
+            if (verdeDi == sensor_cor['direito'] and verdeEs == 6):
                 # se ele ver verde do lado direito
                 mfrente()
                 DgiroVerde()
-            elif (verdeDi== 6 and verdeEs==3):
+            elif (verdeDi== 6 and verdeEs==sensor_cor['esquerdo']):
                 #se ele ver verde do lado esquerdo
                 mfrente()
                 EgiroVerde()
@@ -401,6 +370,28 @@ def subir():
 
     #garra.run_to_rel_pos(position_sp=75, speed_sp=400, stop_action="hold")
 
+def DualGreen():
+    if(carga[3] == 3 and carga[2]==3):
+        twoverde()
+        mfrentemenor()
+    else:
+        mtras()
+        stop()
+        if(carga[3] == 1 and carga[2] == 1):
+            mfrente()
+        elif(carga[3] == 1 and carga[2]== 6):
+            mfrente()
+        elif (carga[3] == 6 and carga[2] == 1):
+            mfrente()
+        elif(carga[3] == 6 and carga[2] == 6):
+            mfrentemenor()
+            if(carga[3]==3 and (carga[2]==6 or carga[2]==1)):
+                DgiroVerde()
+                mfrentemenor()
+            elif(carga[2] == 3 and (carga[3]==6 or carga[3]==1)):
+                EgiroVerde()
+                mfrentemenor()
+
 def executar(TP, SP):
     print(carga)
     pid = PID(KP, KI, KD, setpoint=SP)
@@ -410,6 +401,7 @@ def executar(TP, SP):
     sleep(0.5)
     try:
         while True:
+            print('carga:',carga)
             Restart()
             if((ultra2.value()>=36 and ultra2.value()<=80)and(carga[1]<=2)):
                 global cont
@@ -433,8 +425,8 @@ def executar(TP, SP):
 
 
         #parte do verde
-            if ((sensor_dir.value() == 10 or sensor_dir.value() == 12 ) or (sensor_esq.value() == 10 or sensor_esq.value() == 12)):
-                verde2(SP)
+            #if (carga[3] == 3 or carga[2]== 3):
+            #    DualGreen()
 
         # condições para evitar ultrapassar o valor máximo do motor
             if (control > VALOR_MAX_CONTROL):
@@ -464,24 +456,34 @@ def executar(TP, SP):
             arq.write(str(i)+',\n')
         arq.close()
 
-def calibragemVerde(button3):
+def CalibrarVerde(button):
     print("<<< VERDE >>>")
-    print('Posicione os sensores de cor na superficie branca e aperte um botao: ')
+    print('aperte o botao esquerdo para calibrar o sensor esquerdo quando estiver no verde')
+    print()
+    print('aperte o botao direito para calibrar o sensor direito quando estiver no verde')
+    print()
+    print('aperte o botao do meio pra sair')
     try:
         while True:
-            if button3.enter:
+            if button.right:
+                direito = sensor_dir.value()
+                sensor_dir.mode='COL-COLOR'
+                cor_direito = sensor_dir.value()
+                sensor_dir.mode='COL-REFLECT'
 
-                di = sensor_dir.value()
-                esq = sensor_esq.value()
-
-                listaVerde=[]
-                listaVerde.append(esq)
-                listaVerde.append(di)
-
-                return listaVerde
+            elif button.left:
+                esquerdo = sensor_esq.value()
+                sensor_esq.mode='COL-COLOR'
+                cor_esquerdo = sensor_esq.value()
+                sensor_esq.mode='COL-REFLECT'
+            elif button.enter:
+                break
             else:
                 sleep(0.01)
-
+        global sensor_cor
+        dici_total = {'esquerdo':esquerdo,'direito':direito}
+        sensor_cor = {'esquerdo':cor_esquerdo,'direito':cor_direito}
+        return dici_total
 
 
     except KeyboardInterrupt:
@@ -495,8 +497,8 @@ def menu():
     button2 = Button()
     print("<< Calibrar | Iniciar >>")
 
-    SP =0;
-
+    SP = 0;
+    verde = 0;
     while True:
 
         if button2.left:
@@ -505,8 +507,9 @@ def menu():
             print('SP atualizado:',SP)
             sleep(0.01)
             system("clear")
-           # verdeCali=calibragemVerde(button2)
-            #print("Verde Atualizado!", verdeCali)
+            #verde = CalibrarVerde(button2)
+            #print(verde)
+            #print(sensor_cor)
             sleep(0.01)
             print("<< Calibrar | Iniciar >>")
 

@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
+from datetime import  timedelta
 from ev3dev.ev3 import *
-motor_dir = LargeMotor('outB')
-motor_esq = LargeMotor('outD')
-TP = 210.0
-for i in range (0,60):
-    motor_dir.run_forever(speed_sp=TP)
-    motor_esq.run_forever(speed_sp=TP)
-motor_esq.stop()
-motor_dir.stop()
+from time import sleep
+
+def CriarCronometro(hora):
+    tempo = timedelta(seconds=0)
+    while True:
+        if str(tempo) ==hora:
+            Sound.beep()
+            global cont
+            cont = cont +1
+            break
+        tempo = tempo + timedelta(seconds=1)
+        sleep(1)
+    print(tempo)
+    return True
+
+
+t = time.gmtime()
+
+print(t.tm_sec)
+while t.tm_sec == 45:
+

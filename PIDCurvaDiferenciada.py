@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 import  struct
 from csv import *
 
-#system('setfont Lat15-TerminusBold14') # estilização
+system('setfont Lat15-TerminusBold14') # estilização
 KP = 18#modifiquei o kp: tava 12
 KI = 0
 KD = 0

@@ -26,6 +26,8 @@ sensor_esq.mode = 'COL-REFLECT'
 sensor_dir.mode = 'COL-REFLECT'
 cont = -1
 contador_lado = 0
+
+contLateral = 0
 TP = 900
 TPDES=300
 carga = " "
@@ -67,70 +69,6 @@ def mre():
     motor_dir.run_to_rel_pos(position_sp=-700, speed_sp=1000, stop_action="hold")
     sleep(0.5)
 
-def mprocurar():
-    client = mqtt.Client()
-    Conectar(client)
-    sleep(0.5)
-    re()
-    re()
-    giroD()
-    sleep(1.5)
-    giroD()
-    sleep(1.5)
-    try:
-        while True:
-            valor = ultra1.value()
-            print(valor)
-            if(valor<= 80):
-                re()
-                re()
-                vertiE()
-                sleep(0.5)
-                stop()
-                if(carga[1]>=18 ):
-                   frente()
-                   frente()
-                   frente()
-                   sleep(0.5)
-                   descerr()
-                   sleep(0.5)
-                   vertiE()
-                   sleep(0.5)
-                   mre()
-                   sleep(0.5)
-                   frente()
-                   sleep(0.5)
-                   mre()
-                   sleep(0.5)
-                   frente()
-                   sleep(0.5)
-                   mre()
-                   sleep(0.5)
-                   frente()
-                   stop()
-
-                   break
-                else:
-                    vertiD()
-                    sleep(0.5)
-                    if(valor <= 80 and carga[1] <= 20):
-                        stop()
-                        re()
-                        giroE()
-                        sleep(1.5)
-                        stop()
-                    elif(valor <= 80 and carga[1]>=40):
-                        stop()
-                        re()
-                        giroE()
-                        sleep(1.5)
-                        stop()
-
-            motor_dir.run_forever(speed_sp=TP)
-            motor_esq.run_forever(speed_sp=TP)
-    except KeyboardInterrupt:
-            stop()
-
 def stop():
     # O robô para de se mover com os dois motores ao mesmo tempo
 
@@ -158,6 +96,24 @@ def CriarCronometro(hora):
             global cont
             cont = cont +1
             break
+        tempo = tempo + timedelta(seconds=1)
+        sleep(1)
+
+def CronometroLateral(hora):
+    tempo = timedelta(seconds=0)
+    while True:
+        if (carga[1] >= 18 and carga[1]<=40):
+            Sound.beep()
+            stop()
+            break
+        if str(tempo) == hora:
+            re()
+            re()
+            sleep(1.0)
+            giroE()
+            sleep(0.5)
+            break
+
         tempo = tempo + timedelta(seconds=1)
         sleep(1)
 
@@ -221,21 +177,59 @@ def TurnoD():
     giroD()
     sleep(1.4)
 
+def CronometroLateral2(hora):
+    tempo = timedelta(seconds=0)
+
+    global  contLateral
+    while True:
+
+        if str(tempo) == hora:
+            re()
+            re()
+            sleep(1.0)
+            giroE()
+            sleep(0.5)
+            contLateral=contLateral+1
+            break
+
+
+        tempo = tempo + timedelta(seconds=1)
+        sleep(1)
+
+def procurar():
+    print("hope")
+
+def buscaLateral():
+
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+    try:
+        while contLateral<=3:
+            motor_esq.run_forever(speed_sp=TP)
+            motor_dir.run_forever(speed_sp=TP)
+            CronometroLateral2('0:00:07')
+        procurar()
+
+    except KeyboardInterrupt:
+        stop()
+def sala3():
+    Principal() #varre no meio
+    buscaLateral() #varre nas bordas e procura o triângulo
 
 def VarreduraLateral():
     client = mqtt.Client()
     Conectar(client)
     sleep(0.5)
-    while True:
-
-
-
-def sala3():
     try:
-       VarreduraLateral()
+        while True:
+            motor_esq.run_forever(speed_sp=TP)
+            motor_dir.run_forever(speed_sp=TP)
+            CronometroLateral('0:00:04')
 
     except KeyboardInterrupt:
-        motor_esq.stop()
-        motor_dir.stop()
+        stop()
 
-VarreduraLateral()
+#VarreduraLateral()
+
+sala3()

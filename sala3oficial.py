@@ -211,6 +211,7 @@ def mcentro():
 
     frente()
 
+
 def frenteManual2():
     #criando o client para se comunicar com o brick
 
@@ -235,7 +236,7 @@ def frenteManual2():
                 sleep(0.5)
                 descerr()
                 sleep(0.5)
-                vertiE()
+                giroTri()
                 sleep(0.5)
 
                 #parte que adicionei
@@ -264,6 +265,7 @@ def frenteManual2():
                     cont =0
 
                 #código para retornar para a parede
+
 
                 giroD()
                 giroD()

@@ -31,10 +31,73 @@ contLateral = 0
 TP = 900
 TPDES=300
 carga = " "
+TPSUB=900
+TP_procurar = 400
+def subirr():
+    garra2.run_timed(time_sp=1500, speed_sp=TPSUB)
+    sleep(0.9)
+
+def mprocurar():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+    subirr()
+    try:
+        while True:
+            valor = ultra1.value()
+            print(valor)
+            if(valor<=60):
+                re()
+                re()
+                vertiE()
+                sleep(0.5)
+                stop()
+                if(carga[1]>=18 ):
+                   frente()
+                   frente()
+                   frente()
+                   sleep(0.5)
+                   descerr()
+                   sleep(0.5)
+                   vertiE()
+                   sleep(0.5)
+                   mre()
+                   sleep(0.5)
+                   frente()
+                   sleep(0.5)
+                   mre()
+                   sleep(0.5)
+                   frente()
+                   sleep(0.5)
+                   mre()
+                   sleep(0.5)
+                   frente()
+                   stop()
+                   break
+                else:
+                    vertiD()
+                    sleep(0.5)
+                    if(valor <= 80 and carga[1] <= 20):
+                        stop()
+                        re()
+                        giroE()
+                        sleep(1.5)
+                        stop()
+                    elif(valor <= 80 and carga[1]>=40):
+                        stop()
+                        re()
+                        giroE()
+                        sleep(1.5)
+                        stop()
+
+            motor_dir.run_forever(speed_sp=TP_procurar)
+            motor_esq.run_forever(speed_sp=TP_procurar)
+    except KeyboardInterrupt:
+            stop()
 
 def vertiE():
-    motor_esq.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def on_connect(client, userdata, flags, message):
@@ -60,8 +123,8 @@ def descerr():
     sleep(0.9)
 
 def vertiD():
-    motor_esq.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=460, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-460, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def mre():
@@ -96,24 +159,6 @@ def CriarCronometro(hora):
             global cont
             cont = cont +1
             break
-        tempo = tempo + timedelta(seconds=1)
-        sleep(1)
-
-def CronometroLateral(hora):
-    tempo = timedelta(seconds=0)
-    while True:
-        if (carga[1] >= 18 and carga[1]<=40):
-            Sound.beep()
-            stop()
-            break
-        if str(tempo) == hora:
-            re()
-            re()
-            sleep(1.0)
-            giroE()
-            sleep(0.5)
-            break
-
         tempo = tempo + timedelta(seconds=1)
         sleep(1)
 
@@ -180,9 +225,9 @@ def TurnoD():
 def CronometroLateral2(hora):
     tempo = timedelta(seconds=0)
 
-    global  contLateral
-    while True:
+    global contLateral
 
+    while True:
         if str(tempo) == hora:
             re()
             re()
@@ -190,42 +235,39 @@ def CronometroLateral2(hora):
             giroE()
             sleep(0.5)
             contLateral=contLateral+1
+            print(contLateral)
             break
-
 
         tempo = tempo + timedelta(seconds=1)
         sleep(1)
 
-def procurar():
-    print("hope")
+def Ajuste():
 
-def buscaLateral():
+    giroD()
+    sleep(1.0)
+    frente()
 
-    client = mqtt.Client()
-    Conectar(client)
-    sleep(0.5)
+def sala3():
+    descerr()
+
+    Principal() #varre no meio
+
+    VarreduraLateral() #varre nas bordas e procura o triângulo
+
+    Ajuste()
+
+    mprocurar()
+
+    #depois varrer mais uma vez na lateral e depositar
+
+
+
+def VarreduraLateral():
     try:
-        while contLateral<=3:
+        while contLateral<= 5:
             motor_esq.run_forever(speed_sp=TP)
             motor_dir.run_forever(speed_sp=TP)
             CronometroLateral2('0:00:07')
-        procurar()
-
-    except KeyboardInterrupt:
-        stop()
-def sala3():
-    Principal() #varre no meio
-    buscaLateral() #varre nas bordas e procura o triângulo
-
-def VarreduraLateral():
-    client = mqtt.Client()
-    Conectar(client)
-    sleep(0.5)
-    try:
-        while True:
-            motor_esq.run_forever(speed_sp=TP)
-            motor_dir.run_forever(speed_sp=TP)
-            CronometroLateral('0:00:04')
 
     except KeyboardInterrupt:
         stop()

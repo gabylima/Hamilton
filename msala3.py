@@ -24,15 +24,30 @@ sensor_dir = ColorSensor("in2")
 
 sensor_esq.mode = 'COL-REFLECT'
 sensor_dir.mode = 'COL-REFLECT'
+
 cont = -1
 contador_lado = 0
-
 contLateral = 0
 TP = 900
 TPDES=300
 carga = " "
 TPSUB=900
 TP_procurar = 400
+
+def Mprocurar():
+    stop()
+    subirr()
+    while True:
+        valor_frente = ultra1.value()
+        motor_dir.run_forever(speed_sp =TP)
+        motor_esq.run_forever(speed_sp=TP)
+        CriarCronometro("0:00:02")
+        if(carga[1]>= 18 and carga[1] <= 30):
+            re()
+            re()
+            vertiD()
+            if(valor_frente >)
+
 def subirr():
     garra2.run_timed(time_sp=1500, speed_sp=TPSUB)
     sleep(0.9)
@@ -259,8 +274,6 @@ def sala3():
     mprocurar()
 
     #depois varrer mais uma vez na lateral e depositar
-
-
 
 def VarreduraLateral():
     try:

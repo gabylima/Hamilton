@@ -125,8 +125,7 @@ def PosObstaculo():
     mfrente()
     mfrente()
     DgiroObs()
-    mtras()
-    mtras()
+    ReObstaculo()
     stop()
 
 def Conectar(client):
@@ -392,6 +391,13 @@ def DualGreen():
                 EgiroVerde()
                 mfrentemenor()
 
+def ReObstaculoTras():
+    motor_dir.run_to_rel_pos(position_sp=-40, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-40, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
+    sleep(0.5)
+
+
+
 def executar(TP, SP):
     print(carga)
     pid = PID(KP, KI, KD, setpoint=SP)
@@ -408,10 +414,10 @@ def executar(TP, SP):
                 cont=cont+1
             s3 = VerificaSala3(cont)
         # parte do obstaculo
-            if ultra1.value() <= 50:
+            if ultra1.value() <= 70:
                 stop()
                 Sound.beep()
-                ReObstaculo()
+                ReObstaculoTras()
                 GirarAteVerObstaculo()
                 stop()
                 client2 = mqtt.Client()

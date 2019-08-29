@@ -319,5 +319,5 @@ def rampa(setpoint):
 
 botao = Button()
 setpoint = calibragem(botao)
-#executar(setpoint)
-rampa(setpoint)
+executar(setpoint)
+#rampa(setpoint)

@@ -91,6 +91,7 @@ def mprocurar():
                    sleep(0.5)
                    frente()
                    stop()
+                   break
 
                 else:
                     if(valor <= 80 and carga[1] <= 20):
@@ -203,8 +204,8 @@ def giroE():
     sleep(0.5)
 
 def giroD():
-    motor_esq.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
-    motor_dir.run_to_rel_pos(position_sp=-500, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=480, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-480, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
 def TurnoE():
@@ -256,6 +257,21 @@ def CronometroLateral2(hora):
         tempo = tempo + timedelta(seconds=1)
         sleep(1)
 
+def reMaior():
+    motor_dir.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+    motor_dir.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+    motor_dir.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+    motor_dir.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    motor_esq.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
 def sala3():
     descerr()
 
@@ -268,6 +284,10 @@ def sala3():
 
 def VarreduraLateral():
     try:
+        reMaior()
+        sleep(0.5)
+        giroD()
+        sleep(0.5)
         while contLateral<= 3:
             motor_esq.run_forever(speed_sp=TPS3)
             motor_dir.run_forever(speed_sp=TPS3)
@@ -308,18 +328,15 @@ def rampa(SP):
     pid = PID(KPR, KIR, KDR, setpoint=SP)
     #print(TPR, KPR)
 
-    while True:
+    valor = sensor_esq.value() - sensor_dir.value()
+    control = pid(valor)
+    if (control > VALOR_MAX_CONTROL):
+         control = VALOR_MAX_CONTROL
+    elif (control < -VALOR_MAX_CONTROL):
+         control = -VALOR_MAX_CONTROL
 
-        valor = sensor_esq.value() - sensor_dir.value()
-        control = pid(valor)
-
-        if (control > VALOR_MAX_CONTROL):
-            control = VALOR_MAX_CONTROL
-        elif (control < -VALOR_MAX_CONTROL):
-            control = -VALOR_MAX_CONTROL
-
-        motor_esq.run_forever(speed_sp=TPR - control)
-        motor_dir.run_forever(speed_sp=TPR + control)
+    motor_esq.run_forever(speed_sp=TPR - control)
+    motor_dir.run_forever(speed_sp=TPR + control)
 
 def Restart():
     button = Button()
@@ -636,10 +653,12 @@ def ReObstaculoTras():
     motor_dir.run_to_rel_pos(position_sp=-40, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=-40, speed_sp=400 + CORRECAO_MOTOR, stop_action="hold")
     sleep(0.5)
+
 def trasVerde():
     motor_dir.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
     motor_esq.run_to_rel_pos(position_sp=-60, speed_sp=400, stop_action="hold")
     sleep(0.5)
+
 def verificarVerde2():
     stop()
     sensor_esq.mode = 'COL-COLOR'
@@ -685,6 +704,7 @@ def verificarVerde2():
 
     sensor_esq.mode = 'COL-REFLECT'
     sensor_dir.mode = 'COL-REFLECT'
+
 def verificarVerde():
     stop()
     sensor_esq.mode = 'COL-COLOR'
@@ -723,6 +743,89 @@ def verificarVerde():
 
     sensor_esq.mode = 'COL-REFLECT'
     sensor_dir.mode = 'COL-REFLECT'
+
+def TurnoEkk():
+    stop()
+    re()
+    re()
+    sleep(1.4)
+    giroEkk()
+    sleep(1.4)
+    frente()
+    frente()
+    frente()
+    frente()
+    sleep(1.4)
+    giroEkk()
+    sleep(1.4)
+
+def TurnoDkk():
+    stop()
+    re()
+    re()
+    sleep(1.4)
+    giroDkk()
+    sleep(1.4)
+    frente()
+    frente()
+    frente()
+    sleep(1.4)
+    giroDkk()
+    sleep(1.4)
+
+def giroDkk():
+    motor_esq.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-500, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
+def Principalkk():
+    global contador_lado
+
+    while True:
+
+        motor_dir.run_forever(speed_sp=TPS3)
+        motor_esq.run_forever(speed_sp=TPS3)
+
+        if contador_lado == 2:
+            stop()
+            Sound.beep()
+            break
+
+        if cont_s3 == -1:
+            CriarCronometro('0:00:02')
+        else:
+            CriarCronometro('0:00:04')
+
+        if cont_s3 % 2 == 0:
+            TurnoEkk()
+            contador_lado = contador_lado + 1
+            subirr()
+            sleep(0.5)
+            descerr()
+        else:
+            TurnoDkk()
+            contador_lado = contador_lado + 1
+            subirr()
+            sleep(0.5)
+            descerr()
+
+def giroEkk():
+
+    motor_esq.run_to_rel_pos(position_sp=-500, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+
+
+def sala3kk():
+    descerr()
+
+    Principalkk()
+
+    while True:
+
+        stop()
 
 
 def executar(SP):
@@ -773,7 +876,7 @@ def executar(SP):
 
             if(s3==1):
                 stop()
-                sala3()
+                sala3kk()
                 global cont_rampa
                 cont_rampa =0
 
@@ -854,3 +957,6 @@ def kk ():
 
 
 menu()
+
+
+

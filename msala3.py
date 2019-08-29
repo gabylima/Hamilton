@@ -25,7 +25,7 @@ sensor_dir = ColorSensor("in2")
 sensor_esq.mode = 'COL-REFLECT'
 sensor_dir.mode = 'COL-REFLECT'
 
-cont = -1
+cont_rampa = -1
 contador_lado = 0
 contLateral = 0
 TP = 900
@@ -34,19 +34,8 @@ carga = " "
 TPSUB=900
 TP_procurar = 400
 
-def Mprocurar():
-    stop()
-    subirr()
-    while True:
-        valor_frente = ultra1.value()
-        motor_dir.run_forever(speed_sp =TP)
-        motor_esq.run_forever(speed_sp=TP)
-        CriarCronometro("0:00:02")
-        if(carga[1]>= 18 and carga[1] <= 30):
-            re()
-            re()
-            vertiD()
-            if(valor_frente >)
+
+
 
 def subirr():
     garra2.run_timed(time_sp=1500, speed_sp=TPSUB)
@@ -57,17 +46,19 @@ def mprocurar():
     Conectar(client)
     sleep(0.5)
     subirr()
+    sleep(0.5)
+    giroD()
+    sleep(1.5)
     try:
         while True:
             valor = ultra1.value()
-            print(valor)
-            if(valor<=60):
+            if(valor<=55):
                 re()
                 re()
                 vertiE()
                 sleep(0.5)
                 stop()
-                if(carga[1]>=18 ):
+                if(carga[1]>=18 ) :
                    frente()
                    frente()
                    frente()
@@ -90,23 +81,15 @@ def mprocurar():
                    stop()
                    break
                 else:
-                    vertiD()
-                    sleep(0.5)
                     if(valor <= 80 and carga[1] <= 20):
                         stop()
                         re()
-                        giroE()
-                        sleep(1.5)
-                        stop()
                     elif(valor <= 80 and carga[1]>=40):
                         stop()
                         re()
-                        giroE()
-                        sleep(1.5)
-                        stop()
 
-            motor_dir.run_forever(speed_sp=TP_procurar)
-            motor_esq.run_forever(speed_sp=TP_procurar)
+            motor_dir.run_forever(speed_sp=TP)
+            motor_esq.run_forever(speed_sp=TP)
     except KeyboardInterrupt:
             stop()
 
@@ -131,6 +114,7 @@ def Conectar(client):
 def Desconectar(client):
     client.loop_stop()
     client.disconnect()
+
 
 def descerr():
 
@@ -170,8 +154,7 @@ def CriarCronometro(hora):
     tempo = timedelta(seconds=0)
     while True:
         if str(tempo) ==hora:
-            Sound.beep()
-            global cont
+            global cont_rampa
             cont = cont +1
             break
         tempo = tempo + timedelta(seconds=1)
@@ -184,17 +167,23 @@ def Principal():
         motor_dir.run_forever(speed_sp=TP)
         motor_esq.run_forever(speed_sp=TP)
 
-        if cont == -1:
+        if cont_rampa == -1:
             CriarCronometro('0:00:02')
         else:
             CriarCronometro('0:00:04')
 
-        if cont % 2 == 0:
+        if cont_rampa % 2 == 0:
             TurnoE()
             contador_lado = contador_lado + 1
+            subirr()
+            sleep(0.5)
+            descerr()
         else:
             TurnoD()
             contador_lado = contador_lado + 1
+            subirr()
+            sleep(0.5)
+            descerr()
         if contador_lado == 3:
             stop()
             Sound.beep()
@@ -214,6 +203,7 @@ def giroD():
 def TurnoE():
     stop()
     re()
+    re()
     sleep(1.4)
     giroE()
     sleep(1.4)
@@ -226,6 +216,7 @@ def TurnoE():
 
 def TurnoD():
     stop()
+    re()
     re()
     sleep(1.4)
     giroD()
@@ -256,12 +247,6 @@ def CronometroLateral2(hora):
         tempo = tempo + timedelta(seconds=1)
         sleep(1)
 
-def Ajuste():
-
-    giroD()
-    sleep(1.0)
-    frente()
-
 def sala3():
     descerr()
 
@@ -269,10 +254,7 @@ def sala3():
 
     VarreduraLateral() #varre nas bordas e procura o triângulo
 
-    Ajuste()
-
     mprocurar()
-
     #depois varrer mais uma vez na lateral e depositar
 
 def VarreduraLateral():
@@ -281,6 +263,14 @@ def VarreduraLateral():
             motor_esq.run_forever(speed_sp=TP)
             motor_dir.run_forever(speed_sp=TP)
             CronometroLateral2('0:00:07')
+            stop()
+            re()
+            re()
+
+            subirr()
+            sleep(0.5)
+            descerr()
+            sleep(0.5)
 
     except KeyboardInterrupt:
         stop()

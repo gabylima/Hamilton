@@ -17,6 +17,7 @@ sensor_obs.mode = 'COL-COLOR'
 
 sensor_cor.mode = 'COL-COLOR'
 sensor_cor2.mode ='COL-COLOR'
+
 infra.mode = 'IR-PROX'
 
 

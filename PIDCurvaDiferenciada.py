@@ -21,13 +21,19 @@ CORRECAO_MOTOR = 0
 carga =" "
 TPDES=900
 cont_rampa = 0
+ults3=0
+
 sensor_cor=0
-TPSUB=700
+TPSUB=800
 TPS3 = 700
 TP_procurar = 400
+
 cont_s3 = -1
 contador_lado = 0
 contLateral = 0
+
+dicionario = ''
+
 # Motores
 motor_dir = LargeMotor('outD')
 motor_esq = LargeMotor('outB')
@@ -165,7 +171,6 @@ def restartsala3():
                 sair = True
                 break
 
-
 def Principal():
     global contador_lado
 
@@ -244,14 +249,7 @@ def CronometroLateral2(hora):
 
     while True:
         if str(tempo) == hora:
-            re()
-            re()
-            re()
-            sleep(1.0)
-            giroE()
-            sleep(0.5)
             contLateral=contLateral+1
-            print(contLateral)
             break
 
         tempo = tempo + timedelta(seconds=1)
@@ -271,7 +269,6 @@ def reMaior():
     motor_esq.run_to_rel_pos(position_sp=-100, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-
 def sala3():
     descerr()
 
@@ -282,13 +279,27 @@ def sala3():
     mprocurar()
     #depois varrer mais uma vez na lateral e depositar
 
+def VarreduraLateralkk():
+    descerr()
+    sleep(0.5)
+    frente()
+    sleep(1.5)
+    giroE()
+    while True:
+        motor_esq.run_forever(speed_sp =TPS3 )
+        motor_dir.run_forever(speed_sp =TPS3 )
+        CriarCronometro("0:00:03")
+        stop()
+        re()
+        re()
+        sleep(1.5)
+        giroE()
+        break
+
 def VarreduraLateral():
+    descerr()
     try:
-        reMaior()
-        sleep(0.5)
-        giroD()
-        sleep(0.5)
-        while contLateral<= 3:
+        while contLateral<= 4:
             motor_esq.run_forever(speed_sp=TPS3)
             motor_dir.run_forever(speed_sp=TPS3)
             CronometroLateral2('0:00:05')
@@ -298,7 +309,6 @@ def VarreduraLateral():
             sleep(0.5)
             descerr()
             sleep(0.5)
-
     except KeyboardInterrupt:
         stop()
 
@@ -320,23 +330,28 @@ def rampa(SP):
     KPR = 10 # modifiquei o kp: tava 12
     KIR = 0
     KDR = 0
-    TPR = 600.0  # modifiquei tp: tava 280
+    TPR = 1000.0  # modifiquei tp: tava 280
 
     V_MAX_MOTOR = 1000
     VALOR_MAX_CONTROL = V_MAX_MOTOR - TPR
 
     pid = PID(KPR, KIR, KDR, setpoint=SP)
-    #print(TPR, KPR)
+    #print(TPR, KPR)7
 
-    valor = sensor_esq.value() - sensor_dir.value()
-    control = pid(valor)
-    if (control > VALOR_MAX_CONTROL):
-         control = VALOR_MAX_CONTROL
-    elif (control < -VALOR_MAX_CONTROL):
-         control = -VALOR_MAX_CONTROL
+    while True:
 
-    motor_esq.run_forever(speed_sp=TPR - control)
-    motor_dir.run_forever(speed_sp=TPR + control)
+
+        valor = sensor_esq.value() - sensor_dir.value()
+        control = pid(valor)
+        if (control > VALOR_MAX_CONTROL):
+             control = VALOR_MAX_CONTROL
+        elif (control < -VALOR_MAX_CONTROL):
+             control = -VALOR_MAX_CONTROL
+
+
+        motor_esq.run_forever(speed_sp=TPR - control)
+        motor_dir.run_forever(speed_sp=TPR + control)
+
 
 def Restart():
     button = Button()
@@ -778,7 +793,6 @@ def giroDkk():
     motor_dir.run_to_rel_pos(position_sp=-500, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
-
 def Principalkk():
     global contador_lado
 
@@ -798,17 +812,35 @@ def Principalkk():
             CriarCronometro('0:00:04')
 
         if cont_s3 % 2 == 0:
-            TurnoEkk()
+            TurnoE()
             contador_lado = contador_lado + 1
             subirr()
             sleep(0.5)
             descerr()
         else:
-            TurnoDkk()
+            TurnoD()
             contador_lado = contador_lado + 1
             subirr()
             sleep(0.5)
             descerr()
+    ajuste()
+
+
+    while True:
+        motor_dir.run_forever(speed_sp=TPS3)
+        motor_esq.run_forever(speed_sp=TPS3)
+
+        CriarCronometro('0:00:06')
+
+        re()
+        re()
+        re()
+        subirr()
+        sleep(0.5)
+        descerr()
+        sleep(0.5)
+        subirr()
+        break
 
 def giroEkk():
 
@@ -816,17 +848,149 @@ def giroEkk():
     motor_dir.run_to_rel_pos(position_sp=500, speed_sp=400, stop_action="hold")
     sleep(0.5)
 
+def VarreduraM():
+    try:
+        descerr()
+        while contLateral <= 10:
+            motor_dir.run_forever(speed_sp=TPS3)
+            motor_esq.run_forever(speed_sp=TPS3)
+            CronometroLateral2("0:00:03")
+            re()
+            re()
+            vertical()
+            sleep(0.5)
+            stop()
+            subirr()
+            descerr()
+    except KeyboardInterrupt:
+        motor_dir.stop()
+        motor_esq.stop()
 
+def vertical():
+    motor_esq.run_to_rel_pos(position_sp=-400, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=400, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def ajuste():
+    motor_esq.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+    motor_dir.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
+    sleep(0.5)
+
+def varreduraUltra():
+    client = mqtt.Client()
+    Conectar(client)
+    sleep(0.5)
+
+    ultras3 = carga[1]
+
+    while carga[1] >=12:
+
+        giroE()
 
 def sala3kk():
     descerr()
-
     Principalkk()
+    VarreduraM()
+    mprocurar()
 
-    while True:
+def VeriVerde():
+    sensor_esq.mode = 'COL-COLOR'
+    sensor_dir.mode = 'COL-COLOR'
+
+    verdeE = sensor_esq.value()
+    verdeD = sensor_dir.value()
+
+    if ((verdeE == 3) and (verdeD == 3)):
+        # condição para verificar se há dois verdes
+
+        twoverde()
+    elif (verdeE == 3):  # condição caso ele veja verde apenas com o sensor esquerdo
+
+        # Primeiro anda um pouco para trás para verifica se a linha de tras é branca ou preta
+
+        motor_dir.run_to_rel_pos(position_sp=-70, speed_sp=400, stop_action="hold")
+        motor_esq.run_to_rel_pos(position_sp=-70, speed_sp=400, stop_action="hold")
+        sleep(0.5)
 
         stop()
 
+        if ((sensor_esq.value() == 1) and (sensor_dir.value() == 6)):
+            motor_esq.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+            motor_dir.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+            motor_dir.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+            motor_esq.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+
+        elif (sensor_esq.value() == 1):
+            # caso a linha atras seja preta ,ele compensa o que andou para tras para ignorar esse verde ( verde pós preto )
+
+            motor_dir.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+            motor_esq.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+
+            sleep(0.5)
+
+        elif (sensor_esq.value() == 6):
+            # caso  a linha atras seja branca , quer dizer que é um verde normal , ou seja ele executa a funça normalmente
+
+            Sound.beep()
+
+            motor_esq.run_to_rel_pos(position_sp=50, speed_sp=400, stop_action="hold")
+            motor_dir.run_to_rel_pos(position_sp=50, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+            motor_dir.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+            motor_esq.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+            motor_esq.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
+            motor_dir.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+    elif (verdeD == 3):
+
+        motor_dir.run_to_rel_pos(position_sp=-80, speed_sp=200, stop_action="hold")
+        motor_esq.run_to_rel_pos(position_sp=-80, speed_sp=200, stop_action="hold")
+        sleep(0.5)
+
+        stop()
+
+        if ((sensor_dir.value() == 1) and (sensor_esq.value() == 6)):
+
+            motor_esq.run_to_rel_pos(position_sp=-120, speed_sp=400, stop_action="hold")
+            motor_dir.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+            motor_dir.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+            motor_esq.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+
+
+        elif (sensor_dir.value() == 1):
+            # caso a linha atras seja preta ,ele compensa o que andou para tras para ignorar esse verde ( verde pós preto )
+
+            motor_dir.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+            motor_esq.run_to_rel_pos(position_sp=150, speed_sp=400, stop_action="hold")
+
+            sleep(0.5)
+
+        elif (sensor_dir.value() == 6):
+            # caso  a linha atras seja branca , quer dizer que é um verde normal , ou seja ele executa a funça normalmente
+
+            Sound.beep()
+
+            motor_esq.run_to_rel_pos(position_sp=50, speed_sp=400, stop_action="hold")
+            motor_dir.run_to_rel_pos(position_sp=50, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+            motor_esq.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+            motor_dir.run_to_rel_pos(position_sp=120, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+
+            motor_dir.run_to_rel_pos(position_sp=-360, speed_sp=400, stop_action="hold")
+            motor_esq.run_to_rel_pos(position_sp=360, speed_sp=400, stop_action="hold")
+            sleep(0.5)
+    sensor_esq.mode = 'COL-REFLECT'
+    sensor_dir.mode = 'COL-REFLECT'
 
 def executar(SP):
     TP = 250.0  # modifiquei tp: tava 280
@@ -838,11 +1002,16 @@ def executar(SP):
     try:
         while True:
             Restart()
+
+            #parte da rampa
+
             if((ultra2.value()>=36 and ultra2.value()<=80)and(carga[1]<=2)):
                 global cont_rampa
                 cont_rampa= cont_rampa + 1
             s3 = VerificaSala3(cont_rampa, SP)
+
         #parte do obstaculo
+
             if ultra1.value() <= 70:
                 stop()
                 Sound.beep()
@@ -861,8 +1030,11 @@ def executar(SP):
 
 
         #parte do verde
-            if ((sensor_esq.value()== 6 )  or (sensor_dir.value()== 6 )):
-                verificarVerde2()
+            if (dicionario["esquerdo"]- 2 < sensor_dir.value() < dicionario["esquerdo"]+ 2):
+                VeriVerde()
+
+            elif (dicionario["direito"]- 2 < sensor_esq.value() < dicionario["direito"] + 2):
+                VeriVerde()
 
         # condições para evitar ultrapassar o valor máximo do motor
             if (control > VALOR_MAX_CONTROL):
@@ -887,32 +1059,69 @@ def executar(SP):
         motor_esq.stop()
         print('cont:', cont_rampa)
 
-def CalibrarVerde(button):
-    print("<<< VERDE >>>")
-    print('aperte o botao de baixo para calibrar o sensor esquerdo quando estiver no verde')
-    print()
-    print('aperte o botao de cima para calibrar o sensor direito quando estiver no verde')
-    print()
-    print('aperte o botao do meio pra sair')
+def calibragem(button2):
+    esquerdo = 0
+
+    direito = 0
+
+    print("-----------------")
+    print("---<<BRANCOS>>---")
+    print("-----------------")
+    print("")
+
+    print("Pressione o botao do meio")
+
     try:
-        esquerdo = 0
-        direito = 0
         while True:
-            if button.up:
-                direito = sensor_dir.value()
-                print(direito)
 
-            elif button.down:
-                esquerdo = sensor_esq.value()
-                print(esquerdo)
-            elif button.enter:
+            #Calibra primeiro o SP
+            if button2.enter:
+                di = sensor_dir.value()
+                esq = sensor_esq.value()
+
+                sp = esq - di
+
+                sleep(2)
                 break
-            else:
-                sleep(0.01)
-        global sensor_cor
-        dici_total = {'esquerdo':esquerdo,'direito':direito}
-        return dici_total
+        system("clear")
+        sleep(1)
 
+        print("----------------")
+        print("---<<VERDE>>---")
+        print("----ESQUERDO----")
+        print("----------------")
+        print("")
+
+        print("Pressione o botao! ")
+        print("")
+
+        while True:
+
+            if button2.enter:
+                esquerdo = sensor_esq.value()
+                break
+
+        sleep(2)
+        print("---------------")
+        print("---<<VERDE>>---")
+        print("----DIREITO----")
+        print("---------------")
+        print("")
+
+        print("Pressione o botao do meio ")
+        print("")
+        while True:
+            if button2.enter:
+                direito = sensor_dir.value()
+                break
+
+        global dicionario
+        dicionario = {'esquerdo': esquerdo, 'direito':direito}
+        print("LET'S GO!")
+        system("clear")
+        sleep(2)
+
+        return sp
 
     except KeyboardInterrupt:
         motor_dir.stop()
@@ -931,12 +1140,10 @@ def menu():
 
         if button2.left:
             system("clear")
-            SP = calibragemSP(button2)
+            SP = calibragem(button2)
             print('SP atualizado:',SP)
             sleep(0.01)
             system("clear")
-            #verde = CalibrarVerde(button2)
-            #print(verde)
             sleep(0.01)
             print("<< Calibrar | Iniciar >>")
 
@@ -945,7 +1152,6 @@ def menu():
             system("clear")
             executar(SP)
             break
-
 
 def kk ():
 
@@ -956,7 +1162,10 @@ def kk ():
         print("sensor esquerdo: ",sensor_esq.value())
 
 
+#mprocurar()
 menu()
+#sala3kk()
+
 
 
 
